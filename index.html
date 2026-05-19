@@ -127,7 +127,7 @@
       maxBounds: obuhvat,
       maxBoundsViscosity: 1.0,
       zoomControl: false
-      }).setView([43.3544, 17.3741], 12);
+      }).setView([43.3544, 17.3741], isMobile ? 11 : 12);
 
       L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', { 
       maxZoom: 19,
@@ -678,7 +678,7 @@
       <div class="popup-title">${feature.properties["Naziv znamenitosti"]}</div>
       <div class="popup-grid">
       <div class="lbl">Mjesto:</div><div class="val">${feature.properties["Mjesto"]}</div>
-      <div class="lbl">Vrsta znamenitosti:</div><div class="val">${feature.properties["Vrsta znamenitosti"]}</div>
+      <div class="lbl">Znamenitost:</div><div class="val">${feature.properties["Vrsta znamenitosti"]}</div>
        <div class="lbl">Značaj:</div><div class="val">${feature.properties["Značaj"]}</div>
       </div>
       </div>
@@ -702,7 +702,7 @@
       <div class="popup-title">${feature.properties["Naziv znamenitosti"]}</div>
       <div class="popup-grid">
       <div class="lbl">Mjesto:</div><div class="val">${feature.properties["Mjesto"]}</div>
-      <div class="lbl">Vrsta znamenitosti:</div><div class="val">${feature.properties["Vrsta znamenitosti"]}</div>
+      <div class="lbl">Znamenitost:</div><div class="val">${feature.properties["Vrsta znamenitosti"]}</div>
        <div class="lbl">Značaj:</div><div class="val">${feature.properties["Značaj"]}</div>
       </div>
       </div>
@@ -911,6 +911,62 @@
 
       layer.bindPopup(okvirPoduzeca, okvir());
       }}).addTo(map);
+
+      var Adresniregistar = L.icon({
+      iconUrl: 'Oznake/Adresniregistar.svg',
+      iconSize: [24,24],
+      iconAnchor: [12,24],
+      popupAnchor: [0,-24]
+      });
+
+      var aktivnaAdresa = null;
+
+      function ukloniAktivnuAdresu() {
+      if (aktivnaAdresa) {
+      map.removeLayer(aktivnaAdresa);
+      aktivnaAdresa = null;
+      }
+      }
+
+      var adresniBufferSloj = L.layerGroup().addTo(map);
+
+      L.geoJSON(adresniregistar, {
+      pointToLayer: function(feature, latlng) {
+      return L.circle(latlng, {
+      radius: 10,
+      stroke: false,
+      fill: true,
+      fillOpacity: 0,
+      interactive: true
+      });
+      },
+      onEachFeature: function(feature, layer) {
+      layer.on('click', function(e) {
+      L.DomEvent.stopPropagation(e);
+      ukloniAktivnuAdresu();
+      const latlng = layer.getLatLng();
+      aktivnaAdresa = L.marker(latlng, {
+      icon: Adresniregistar,
+      zIndexOffset: 1000
+      }).addTo(map);
+
+      var okvirAdrese = `
+      <div class="popup-title">${feature.properties["Adresa"] || ""}</div>
+      `;
+
+      aktivnaAdresa.bindPopup(okvirAdrese, okvir());
+      aktivnaAdresa.openPopup();
+      aktivnaAdresa.on('popupclose', function() {
+      ukloniAktivnuAdresu();
+      });
+      });
+      }
+      }).addTo(adresniBufferSloj);
+      adresniBufferSloj.bringToBack();
+
+      map.on('click', function() {
+      ukloniAktivnuAdresu();
+      });
 
     </script>
 
