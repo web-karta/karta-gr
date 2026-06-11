@@ -8,6 +8,7 @@
       <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
       <link href="https://fonts.googleapis.com/css2?family=PT+Sans:wght@400;700&display=swap" rel="stylesheet">
       <link href="https://fonts.googleapis.com/css2?family=PT+Sans:wght@400;700&family=PT+Serif:wght@400;700&display=swap" rel="stylesheet">
+      <link rel="stylesheet" href="https://unpkg.com/leaflet.locatecontrol/dist/L.Control.Locate.min.css">
 
     <style>
       html, body, #map {
@@ -261,16 +262,16 @@ text-decoration: none !important;
 
 .leaflet-control-locate a span,
 .leaflet-control-locate a i {
-display: none !important;
+  display: none !important;
 }
 
 .leaflet-control-locate a::after {
-content: "➤";
-display: block;
-font-size: 20px;
-color: black;
-line-height: 1;
-transform: translateY(-2px) rotate(-45deg);
+  content: "➤";
+  display: block;
+  font-size: 20px;
+  color: black;
+  line-height: 1;
+  transform: translateY(-2px) rotate(-45deg);
 }
 
 .leaflet-control-locate.active a,
@@ -283,6 +284,22 @@ background: white !important;
 box-shadow: 0 1px 4px rgba(0,0,0,0.3) !important;
 border: none !important;
 outline: none !important;
+}
+@media (max-width: 768px) {
+  .leaflet-control-locate .location-panel {
+    position: fixed !important;
+    left: 50% !important;
+    right: auto !important;
+    top: auto !important;
+    bottom: 18px !important;
+    transform: translateX(-50%) !important;
+    z-index: 1200 !important;
+  }
+
+  .leaflet-control-locate .nearest-results {
+    width: 300px;
+    max-height: 130px;
+  }
 }
     </style>
 
@@ -339,7 +356,8 @@ outline: none !important;
       <script src="Podatci/adresniregistar.js"></script>
     <script>
 
-      var obuhvat = [[40, 11],[50, 21]]; //ZASAD!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! PROMIJENI!!!!!!!!!!!!!!!!!!!!!! OVO JE SAMO TEST JER SAM U ZAGREBU!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+var obuhvat = [[43.24, 17.20], [43.47, 17.55]];
+//ZASAD!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! PROMIJENI!!!!!!!!!!!!!!!!!!!!!! OVO JE SAMO TEST JER SAM U ZAGREBU!!!!!!!!!!!!!!!!!!!!!!!!!!!!
       var graniceObuhvata = L.latLngBounds(obuhvat);
       var map = L.map('map', {
       maxBounds: obuhvat,
@@ -352,16 +370,26 @@ outline: none !important;
       minZoom: 10 
       }).addTo(map);
 
-      const mjeriloOznake = L.Marker.prototype.setIcon;
-      L.Marker.prototype.setIcon = function(icon) {
-      const size = map.getZoom() <= 14 ? 10 : 20;
-      const newIcon = L.icon({
-      iconUrl: icon.options.iconUrl,
-      iconSize: [size, size],
-      iconAnchor: [size/2, size/2]
-      });
-      return mjeriloOznake.call(this, newIcon);
-      };
+const mjeriloOznake = L.Marker.prototype.setIcon;
+
+L.Marker.prototype.setIcon = function(icon) {
+
+  if (!icon || !icon.options || !icon.options.iconUrl) {
+    return mjeriloOznake.call(this, icon);
+  }
+
+  const size = map.getZoom() <= 14 ? 10 : 20;
+
+  const newIcon = L.icon({
+    iconUrl: icon.options.iconUrl,
+    iconSize: [size, size],
+    iconAnchor: [size / 2, size / 2],
+    popupAnchor: icon.options.popupAnchor || [0, 0]
+  });
+
+  return mjeriloOznake.call(this, newIcon);
+};
+
 
       function promijenimjeriloOznake() {
       map.eachLayer(function(layer) {
