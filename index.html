@@ -232,6 +232,58 @@
       .nearest-item:hover {
       background: rgb(235,235,235);
       }
+
+.leaflet-control-locate {
+margin-top: 10px !important;
+}
+
+.leaflet-control-locate,
+.leaflet-control-locate.leaflet-bar {
+border: none !important;
+background: transparent !important;
+box-shadow: none !important;
+}
+
+.leaflet-control-locate a {
+width: 44px !important;
+height: 44px !important;
+border-radius: 50% !important;
+background: white !important;
+box-shadow: 0 1px 4px rgba(0,0,0,0.3) !important;
+border: none !important;
+
+display: flex !important;
+align-items: center !important;
+justify-content: center !important;
+
+text-decoration: none !important;
+}
+
+.leaflet-control-locate a span,
+.leaflet-control-locate a i {
+display: none !important;
+}
+
+.leaflet-control-locate a::after {
+content: "➤";
+display: block;
+font-size: 20px;
+color: black;
+line-height: 1;
+transform: translateY(-2px) rotate(-45deg);
+}
+
+.leaflet-control-locate.active a,
+.leaflet-control-locate.following a,
+.leaflet-control-locate.requesting a,
+.leaflet-control-locate a:hover,
+.leaflet-control-locate a:focus,
+.leaflet-control-locate a:active {
+background: white !important;
+box-shadow: 0 1px 4px rgba(0,0,0,0.3) !important;
+border: none !important;
+outline: none !important;
+}
     </style>
 
   </head>
@@ -259,6 +311,7 @@
       </div>
 
       <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+      <script src="https://unpkg.com/leaflet.locatecontrol/dist/L.Control.Locate.min.js"></script>
       <script src="Podatci/crkve.js"></script>
       <script src="Podatci/groblja.js"></script>
       <script src="Podatci/skole.js"></script>
@@ -476,128 +529,78 @@
 
       pretrazi.addTo(map);
 
-      var pracenjeLokacije = null;
-      var markerLokacije = null;
+var locateControl = L.control.locate({
+position: 'topleft',
+setView: 'once',
+flyTo: true,
+keepCurrentZoomLevel: false,
+initialZoomLevel: 18,
+drawCircle: true,
+drawMarker: true,
+showCompass: true,
 
-      var IkonaLokacije = L.divIcon({
-      className: "",
-      html: `
-      <div style="
-      font-size:30px;
-      color:#1976d2;
-      text-shadow:0 1px 4px rgba(0,0,0,0.35);
-      transform:translateY(-8px);
-      ">📍</div>
-      `,
-      iconSize: [30, 30],
-      iconAnchor: [15, 30]
-      });
+strings: {
+title: "Prikaži lokaciju",
+popup: "Nalazite se unutar {distance} m od ovog mjesta.",
+outsideMapBoundsMsg: "Nalazite se izvan područja Općine Grude."
+},
 
-      var lociranje = L.control({ position: 'topleft' });
+locateOptions: {
+enableHighAccuracy: true,
+maximumAge: 5000,
+timeout: 10000,
+watch: true
+}
+}).addTo(map);
 
-      lociranje.onAdd = function () {
-      var container = L.DomUtil.create('div');
-      container.style.marginTop = '10px';
+setTimeout(function() {
 
-      var gumb = L.DomUtil.create('div', 'toggle-btn', container);
+var locateContainer = document.querySelector('.leaflet-control-locate');
 
-      gumb.innerHTML = `
-      <span style="
-      display:inline-block;
-      transform: translateY(-2px) rotate(-45deg);
-      font-size:20px;
-      ">
-      ➤
-      </span>
-      `;
+if (locateContainer) {
 
-      gumb.style.display = "flex";
-      gumb.style.alignItems = "center";
-      gumb.style.justifyContent = "center";
+L.DomEvent.disableClickPropagation(locateContainer);
+L.DomEvent.disableScrollPropagation(locateContainer);
 
-      gumb.title = "Prikaži lokaciju";
+var panel = L.DomUtil.create('div', 'location-panel', locateContainer);
 
-      var panel = L.DomUtil.create('div', 'location-panel', container);
-      panel.innerHTML = `<div id="nearestResults" class="nearest-results"></div>`;
+panel.innerHTML = `<div id="nearestResults" class="nearest-results"></div>`;
 
-      setTimeout(function() {
+var results = document.getElementById("nearestResults");
 
-      var results = document.getElementById("nearestResults");
+if (results) {
+L.DomEvent.disableScrollPropagation(results);
+L.DomEvent.disableClickPropagation(results);
+}
 
-      if (results) {
-      L.DomEvent.disableScrollPropagation(results);
-      L.DomEvent.disableClickPropagation(results);
-      }
+}
 
-      }, 0);
+}, 0);
 
-      gumb.onclick = function(e) {
-      L.DomEvent.stopPropagation(e);
-      zatvoriOtvoreno('lociranje');
+map.on('locationfound', function(e) {
+var userLatLng = e.latlng;
 
-      if (!navigator.geolocation) {
-      alert("Preglednik ne podržava lociranje.");
-      return;
-      }
+if (!graniceObuhvata.contains(userLatLng)) {
+alert("Nalazite se izvan područja Općine Grude.");
+locateControl.stop();
 
-      if (pracenjeLokacije !== null) {
-      navigator.geolocation.clearWatch(pracenjeLokacije);
-      pracenjeLokacije = null;
-      panel.style.display = "none";
+var locationPanel = document.querySelector('.location-panel');
+if (locationPanel) {
+locationPanel.style.display = 'none';
+}
 
-      if (markerLokacije) {
-      map.removeLayer(markerLokacije);
-      markerLokacije = null;
-      }
+return;
+}
 
-      return;
-      }
+var locationPanel = document.querySelector('.location-panel');
 
-      pracenjeLokacije = navigator.geolocation.watchPosition(function(position) {
+if (locationPanel) {
+locationPanel.style.display = 'block';
+}
 
-      var userLatLng = L.latLng(
-      position.coords.latitude,
-      position.coords.longitude
-      );
+prikaziNajblizeObjekte(userLatLng);
 
-      if (!graniceObuhvata.contains(userLatLng)) {
-      alert("Nalazite se izvan područja Općine Grude.");
-      navigator.geolocation.clearWatch(pracenjeLokacije);
-      pracenjeLokacije = null;
-      panel.style.display = "none";
-      return;
-      }
-
-      if (markerLokacije) {
-      markerLokacije.setLatLng(userLatLng);
-      } else {
-      markerLokacije = L.marker(userLatLng, {
-      icon: IkonaLokacije,
-      zIndexOffset: 2000
-      }).addTo(map);
-      }
-
-      map.flyTo(userLatLng, 18, {
-      duration: 0.8
-      });
-
-      panel.style.display = "block";
-      prikaziNajblizeObjekte(userLatLng);
-
-      }, function() {
-      alert("Lokacija nije dostupna ili nije dopuštena.");
-      }, {
-      enableHighAccuracy: true,
-      maximumAge: 5000,
-      timeout: 10000
-      });
-      };
-
-      L.DomEvent.disableClickPropagation(container);
-      return container;
-      };
-
-      lociranje.addTo(map);
+});
 
       var objektiZaPretragu = [];
 
@@ -787,11 +790,6 @@
       if (searchPanel) {
       searchPanel.style.display = 'none';
 
-      if (markerLokacije) {
-      map.removeLayer(markerLokacije);
-      markerLokacije = null;
-      }
-
       var searchInput = document.getElementById('searchInput');
       if (searchInput) {
       searchInput.value = '';
@@ -804,11 +802,9 @@
       locationPanel.style.display = 'none';
       }
 
-      if (pracenjeLokacije !== null) {
-      navigator.geolocation.clearWatch(pracenjeLokacije);
-      pracenjeLokacije = null;
-      }
-
+if (locateControl) {
+locateControl.stop();
+}
       var dialog = document.getElementById('infoOpcina');
 
       if (dialog) {
