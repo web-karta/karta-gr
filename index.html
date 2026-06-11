@@ -5,6 +5,7 @@
       <title>Web-karta Općine Grude</title>
       <link rel="icon" type="image/svg+xml" href="Oznake/Grude.svg">
       <link rel="preload" as="image" href="Oznake/Pretraga.svg">
+<link rel="preload" as="image" href="Oznake/Grude.svg">
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
       <link href="https://fonts.googleapis.com/css2?family=PT+Sans:wght@400;700&display=swap" rel="stylesheet">
@@ -78,6 +79,10 @@
       user-select: none;
       }
 
+      .toggle-btn.active {
+background: #FFF2CC !important;
+}
+
       .menu-panel {
       position: absolute;
       top: 0;
@@ -150,6 +155,60 @@ overflow-y: auto;
       font-weight: 700;
       }
 
+.map-info-panel {
+position: absolute;
+top: 0;
+right: 54px;
+display: none;
+width: 360px;
+background: white;
+border-radius: 18px;
+box-shadow: 0 1px 4px rgba(0,0,0,0.3);
+padding: 18px;
+box-sizing: border-box;
+font-family: "PT Sans", sans-serif;
+font-size: 14px;
+line-height: 1.15;
+text-align: justify;
+max-width: 360px;
+max-height: 500px;
+
+min-width: 280px;
+min-height: 200px;
+z-index: 1200;
+overflow-y: auto;
+}
+
+.map-info-title {
+font-family: "PT Serif", serif;
+font-size: 20px;
+font-weight: 700;
+text-align: center;
+margin-bottom: 12px;
+}
+
+@media (max-width: 768px) {
+
+.map-info-panel {
+top: 0;
+right: 44px;
+
+width: 300px;
+
+max-height: 350px;
+
+padding: 14px;
+font-size: 12px;
+line-height: 1.15;
+border-radius: 16px;
+}
+
+.map-info-title {
+font-size: 16px;
+margin-bottom: 10px;
+}
+
+}
 
       .search-panel {
       position: absolute;
@@ -277,11 +336,16 @@ text-decoration: none !important;
 
 .leaflet-control-locate.active a,
 .leaflet-control-locate.following a,
-.leaflet-control-locate.requesting a,
+.leaflet-control-locate.requesting a {
+background: #FFF2CC !important;
+box-shadow: 0 1px 4px rgba(0,0,0,0.3) !important;
+border: none !important;
+outline: none !important;
+}
+
 .leaflet-control-locate a:hover,
 .leaflet-control-locate a:focus,
 .leaflet-control-locate a:active {
-background: white !important;
 box-shadow: 0 1px 4px rgba(0,0,0,0.3) !important;
 border: none !important;
 outline: none !important;
@@ -348,6 +412,12 @@ height: 100%;
 object-fit: contain;
 display: block;
 }
+
+
+.info-dialog-text ul {
+margin: 4px 0;
+padding-left: 18px;
+}
     </style>
 
   </head>
@@ -374,9 +444,11 @@ display: block;
       <br>Graniči s preostale tri jedinice lokalne samouprave u Županiji, odnosno s Općinom Posušje na sjeveru, Gradom Širokim Brijegom na istoku te s Gradom Ljubuškim na jugu. Na zapadu Općina Grude graniči s Republikom Hrvatskom, odnosno s Gradom Imotskim na sjeverozapadu, Općinom Runovići na zapadu te na jugozapadu s Gradom Vrgorcem.
       <br>Imotsko polje zauzima središnji dio Općine Grude, dok se sjeverno i južno od njega uzdižu brdska i brežuljkasta područja. Najniža točka Općine Grude nalazi se u dolini rijeke Tihaljine, u Nezdravici, na 110 m. n. v., dok je najviša točka vrh Trstike na 820 m. n. v.<br>
       Općinu Grude čini 13 naselja:<br> 
-      <li>Grude,</li> <li>Sovići,</li> <li>Drinovci,</li> <li>Ružići,</li> <li>Donji Mamići,</li> <li>Tihaljina,</li> <li>Gorica,</li> <li>Dragićina,</li> <li>Drinovačko Brdo,</li> <li>Borajna,</li> <li>Blaževići,</li> <li>Puteševica,</li> <li>Jabuka.</li> Potencijalno bi broj mogao biti i veći kad bi se od Gruda izdvojila naselja Pocrte, Vrućice i Grudsko Vrilo koja se često smatraju zasebnima te ako bi se umjesto općeg naziva Donji Mamići (sve rjeđe se koristi) više sela u navedenom mjestu proglasilo posebnim naseljima (Ledinac, Podledinac, Višnjica, Medovići, Pogana Vlaka te Cerov Dolac).
-    <br>Sjedište Općine Grude nalazi se u Ulici fra Gabre Grubišića br. 4 u Grudama.<br><p>
-    <img src="Oznake/Općina.png" class="dialog-image">
+      <ul>
+      <li>Grude,</li> <li>Sovići,</li> <li>Drinovci,</li> <li>Ružići,</li> <li>Donji Mamići,</li> <li>Tihaljina,</li> <li>Gorica,</li> <li>Dragićina,</li> <li>Drinovačko Brdo,</li> <li>Borajna,</li> <li>Blaževići,</li> <li>Puteševica,</li> <li>Jabuka.</li></ul> Potencijalno bi broj mogao biti i veći kad bi se od Gruda izdvojila naselja Pocrte, Vrućice i Grudsko Vrilo koja se često smatraju zasebnima te ako bi se umjesto općeg naziva Donji Mamići (sve rjeđe se koristi) više sela u navedenom mjestu proglasilo posebnim naseljima (Ledinac, Podledinac, Višnjica, Medovići, Pogana Vlaka te Cerov Dolac).
+    <br>Sjedište Općine Grude nalazi se u Ulici fra Gabre Grubišića br. 4 u Grudama.<br>
+    <div class="dialog-image-box">
+<img src="Oznake/Općina.png" class="dialog-image"></div>
  
     
     </div>
@@ -395,7 +467,7 @@ Područje današnje Općine Grude naseljeno je još od prapovijesti. Najstariji 
 <div class="dialog-image-box">
 <img src="Oznake/Ravlića Pećina.jpeg" class="dialog-image">
 </div>
-<br>U željeznom dobu područje naseljava ilirsko pleme Delmati, po kojemu cijelo ovo područje biva prozvano Dalmacijom. Nakon rimskih osvajanja prostor se romanizira, grade se prometnice i naselja, a u Gorici nastaju prve kršćanske građevine, među kojima se ističu ostatci ranokršćanske krstionice iz IV. stoljeća i crkve sv. Stjepana Prvomučenika iz V. stoljeća.
+U željeznom dobu područje naseljava ilirsko pleme Delmati, po kojemu cijelo ovo područje biva prozvano Dalmacijom. Nakon rimskih osvajanja prostor se romanizira, grade se prometnice i naselja, a u Gorici nastaju prve kršćanske građevine, među kojima se ističu ostatci ranokršćanske krstionice iz IV. stoljeća i crkve sv. Stjepana Prvomučenika iz V. stoljeća.
 
 <div class="dialog-subtitle">Općina Grude u Imoti</div>
 
@@ -403,7 +475,7 @@ U srednjem vijeku područje Gorice bilo je crkveno, a vjerojatno i svjetovno sre
 <div class="dialog-image-box">
 <img src="Oznake/Gorica.jpg" class="dialog-image">
 </div>
-<br>Prvi pisani spomen Gruda zabilježen je 1436. godine u Trogiru, gdje se navode kao "Grude u Imoti". Nakon osmanskog osvajanja Imotske krajine 1493. godine Grude postaju dijelom nahije Imotski. Mletačka Republika oslobodila je krajinu 1717., no već godinu kasnije Požarevačkim mirom dolazi do njezine podjele. Zapadni dio, danas zvan Imotskom krajinom, postaje dijelom Mletačke Republike, dok Grude, Posušje i staro imotsko središte Gorica ostaju u Osmanskom Carstvu. Taj preostali dio nekadašnje Imotske krajine nazvan je Imotska bekija (tur.-ar. <i>baquia</i> - ostatak, Imotski ostatak).
+Prvi pisani spomen Gruda zabilježen je 1436. godine u Trogiru, gdje se navode kao "Grude u Imoti". Nakon osmanskog osvajanja Imotske krajine 1493. godine Grude postaju dijelom nahije Imotski. Mletačka Republika oslobodila je krajinu 1717., no već godinu kasnije Požarevačkim mirom dolazi do njezine podjele. Zapadni dio, danas zvan Imotskom krajinom, postaje dijelom Mletačke Republike, dok Grude, Posušje i staro imotsko središte Gorica ostaju u Osmanskom Carstvu. Taj preostali dio nekadašnje Imotske krajine nazvan je Imotska bekija (tur.-ar. <i>baquia</i> - ostatak, Imotski ostatak).
 Prijedlog s Berlinskog kongresa iz 1878. godine o pripajanju Bekije Imotskoj krajini nije usvojen te je granica uspostavljena 1718. godine danas postala državnom granicom između Bosne i Hercegovine i Hrvatske te je u narodu poznata kao "najneprirodnija granica na svitu". Unatoč tome, veze između Gruda i Imotskog nikada nisu prekinute. Zajednička povijest, ikavski govor, običaji i svakodnevne veze razlog su zbog kojih se područje Gruda i danas često naziva Imotskom bekijom.
 Nakon odvajanja od Imotske krajine Grude ostaju pod osmanskom vlašću do 1878., kada upravu preuzima Austro-Ugarska Monarhija. Ulaze potom u sastav Kraljevine SHS, Kraljevine Jugoslavije, Banovine Hrvatske, Nezavisne Države Hrvatske te nakon Drugoga svjetskog rata Jugoslavije.
 
@@ -429,7 +501,7 @@ onclick="document.getElementById('infoDanas').style.display='none'">×</div>
 <div class="dialog-subtitle">Javna služba</div>
 
 Općina Grude glavna je ustanova mjesne upravne razine. U okviru općinske uprave djeluju tri službe, a u sklopu njih i uredi koji pružaju usluge građanima. To su ponajprije matični uredi koji, osim u Grudama, djeluju i u Drinovcima, Sovićima, Tihaljini, Ledincu te Ružićima. 
-<br>Na Boboški se nalazi i javnobilježnički ured. Pod nadležnošću Općine su i komunalna poduzeća Komunalno te Vrilo.
+<br>Na Boboški se nalaze i javnobilježnički te poštanski ured. Pod nadležnošću Općine su i komunalna poduzeća Komunalno te Vrilo.
 <br>Ustroj Županije zapadnohercegovačke te njezina decentraliziranost dodijelila je Općini Grude i dva županijska ministarstva: Ministarstvo zdravstva, rada, obitelji i socijalne politike te Ministarstvo hrvatskih branitelja iz Domovinskog rata. Nalaze se u samom središtu Gruda.
 <br>Na županijskoj razini djeluju i Centar za socijalni rad, Zavod za zdravstveno osiguranje ŽZH te Ured za zdravstveno osiguranje i Služba za zapošljavanje pri Ministarstvu zdravstva, rada, obitelji i socijalne politike ŽZH, Odsjek upravnih poslova pri Ministarstvu unutarnjih poslova ŽZH sa sjedištem u Ljubuškom. 
 <br>Federalnoj razini uprave pripadaju grudske ispostave Mirovinskog i invalidskog osiguranja te Porezne uprave. 
@@ -452,6 +524,64 @@ Središnja policijska postaja nalazi se na Bilom Brigu u Grudama, a na području
 
 
 
+<div id="infoGospodarstvo" class="info-dialog">
+
+<div class="info-dialog-close"
+onclick="document.getElementById('infoGospodarstvo').style.display='none'">×</div>
+
+<div class="info-dialog-title">Gospodarstvo</div>
+
+<div class="info-dialog-text">
+
+Gospodarstvo predstavlja jedan od najznačajnijih razvojnih čimbenika Općine Grude te je tijekom posljednjih desetljeća postalo osnova njezinog društvenog i prostornog razvoja. Od nekada pretežno ruralnog područja, Grude su se razvile u jednu od gospodarski najuspješnijih općina u Bosni i Hercegovini.<br> 
+Gospodarsku strukturu karakterizira velik broj malih i srednjih poduzeća. Razvoj poduzetništva temelji se na dugoj tradiciji privatne inicijative, povoljnom prometnom položaju te snažnoj orijentaciji prema proizvodnim, trgovačkim i uslužnim djelatnostima.<br>
+Posebno mjesto u gospodarskom sustavu Općine Grude zauzimaju poduzeća koja su svojim poslovanjem stekla regionalnu i međunarodnu prepoznatljivost. Među njima se ističe Violeta, najpoznatiji brend iz Bosne i Hercegovine, dok značajnu ulogu imaju i poduzeća Grafotisak, Bili Brig, TP Drinovci, Putovi Grude, Lumen, AX-Soling, Geometrika, Pušina i Bilo Trade.<br> 
+Gospodarski pokazatelji upućuju na kontinuiran rast broja zaposlenih, povećanje ukupnih prihoda te stabilno poslovanje poduzeća.<br>
+Prostorni razvoj gospodarstva usko je povezan s gospodarskim zonama koje predstavljaju ključna područja za smještaj proizvodnih, trgovačkih i uslužnih djelatnosti.<br> 
+Najznačajnija među njima je gospodarska zona Poljanice, površine od 43 hektara. Njezina je izgradnja rezultat strateških razvojnih opredjeljenja Općine te predstavlja jedan od najvažnijih projekata gospodarske infrastrukture.<br> 
+U zoni su smješteni proizvodno-industrijski pogoni s ekološki prihvatljivim sadržajima, komunalno-servisne djelatnosti, trgovački i uslužni objekti te ugostiteljski sadržaji.<br> 
+Uz postojeće gospodarske površine planirane su i dodatne gospodarske zone: gospodarska zona Dubrava, gospodarska zona Zagomila, gospodarska zona Grude-Jug te gospodarska zona Sovići.<br>
+Budući razvoj gospodarstva Općine Grude temelji se na daljnjem jačanju poduzetničke infrastrukture, privlačenju novih investicija te stvaranju povoljnog poslovnog okruženja. Poseban razvojni potencijal predstavljaju obnovljivi izvori energije, osobito solarne elektrane, vjetroelektrane i manji hidroenergetski objekti, čiji razvoj može dodatno pridonijeti gospodarskoj konkurentnosti i održivom razvoju Općine.
+
+<div class="dialog-image-box"><img src="Oznake/zone.png" class="dialog-image"></div>
+
+</div>
+</div>
+
+
+<div id="infoKultura" class="info-dialog">
+
+<div class="info-dialog-close"
+onclick="document.getElementById('infoKultura').style.display='none'">×</div>
+
+<div class="info-dialog-title">Kulturne i sportske ustanove</div>
+
+<div class="info-dialog-text">
+
+  <div class="dialog-subtitle">Kulturne ustanove</div>
+
+Na području Općine Grude djeluje nekoliko kulturnih ustanova. Kulturni dom Antun Branko Šimić promiče kulturu, očuvanje tradicije i potiče kreativnog izražavanja. Njemu pripadaju i Kinodvorana Grude s 132 sjedeća mjesta te Gradska knjižnica Grude.<br> 
+Ogranak Matice hrvatske u Grudama osnovan je 1991. godine, a organizira i suorganizira brojne manifestacije na području Općine.<br> 
+U Gorici djeluje Hrvatska franjevačka arheološka zbirka Sv. Stjepan koja čuva bogatu kulturno-povijesnu baštinu, posebice prapovijesne i ranokršćanske nalaze s područja stare Imote.<br>
+Važno je spomenuti i Radio Grude, koji djeluje kao jedan od glavnih medijskih i informativnih čimbenika na području Općine Grude.
+<div class="dialog-image-box"><img src="Oznake/kino.png" class="dialog-image"></div>
+
+
+  <div class="dialog-subtitle">Sportske ustanove</div>
+U Općini Grude nalazi se više sportskih objekata, kao i brojni uspješni klubovi.<br>
+Sportska dvorana Bili Brig središnje je mjesto grudskog sporta, ali i multifunkcionalna dvorana koja služi za različite manifestacije.<br>
+Stadion Elić Luka (Bekija) služi kao sportski teren HNK Grude, a nogometni teren Boljava izgrađen je za potrebe HNK Drinovci.<br>
+U Grudama se nalazi i Boćarski dom Biberon u Grudama koji koriste boćarski klubovi, a redovito ugošćava i različite kulturne događaje.<br>
+Svi klubovi djeluju na jednoj od navedenih lokacija što zahtjeva izgradnju dodatnih kapaciteta.<br> 
+Neki od važnijih klubova u Općini Grude su: HKK Grude, HNK Grude, HNK Drinovci, HŽRK Grude, TK Grude, BK Grude, BK Sv. Stipan Gorica, Grudske mažoretkinje, Cheerleading klub Ledinac, Karate klub Grude te biciklistički klubovi Grude i Drinovci. 
+<br>Na području Općine nalaze se i rekreacijski objekti, poput konjičkih klubova Stina i Alat u Sovićima i Crljenoj Jami, teretana na području Gruda i Sovića, avanturističkog parka u Peć Mlinima te brojnih sportskih terena.
+</div>
+</div>
+
+
+
+
+
 <div id="infoVjerski" class="info-dialog">
 
 <div class="info-dialog-close"
@@ -465,14 +595,14 @@ onclick="document.getElementById('infoVjerski').style.display='none'">×</div>
 
 Svi vjerski objekti na području Općine Grude su katolički, a uključuju crkve, kapelice i groblja.<br>
 Na području Općine Grude djeluje sedam župa sa svojim župnim i filijalnim crkvama, a pripadaju grudskom dekanatu:<br>
-<li>župa svete Katarine Aleksandrijske - Grude <br>(filijalna crkva sv. Jure u Dragićini, zavjetna crkva sv. Jure na Cerama),</li>
+<ul><li>župa svete Katarine Aleksandrijske - Grude <br>(filijalna crkva sv. Jure u Dragićini, zavjetna crkva sv. Jure na Cerama),</li>
 <li>župa svetog Stjepana Prvomučenika - Gorica-Sovići <br>(stara župna crkva i filijalna crkva sv. Petra i Pavla u Sovićima),</li>
 <li>župa svetog Mihovila Arkanđela - Drinovci <br>(filijalna crkve sv. Petra u Drinovcima - Ploca-Bili Greb, filijalna crkva sv. Ante na Drinovačkom Brdu, filijalna crkva sv. Luke u Blaževićima),</li>
-<li>župa svetog Ivana Krstitelja - Ružići <br>(filijalna crkva svetog Nikole Tavelića na Marića Strani-Škevinoj Njivi),</li>
+<li>župa svetog Ivana Krstitelja - Ružići <br>(filijalna crkva sv. Nikole Tavelića na Marića Strani-Škevinoj Njivi),</li>
 <li>župa svete Terezije od Djeteta Isusa - Ledinac,</li>
 <li>župa Bezgrješnog začeća Blažene Djevice Marije - Tihaljina <br>(filijalna crkva sv. Josipa na Puteševici),</li>
-<li>župa sv. Antuna Padovanskog - Raskrižje <br>(filijalna crkva sv. Marka u Borajni).</li> <p>
-<img src="Oznake/3crkve.png" class="dialog-image"><p>
+<li>župa sv. Antuna Padovanskog - Raskrižje <br>(filijalna crkva sv. Marka u Borajni).</li></ul>
+<div class="dialog-image-box"><img src="Oznake/3crkve.png" class="dialog-image"></div>
 
 Dio područja Općine Grude pripada župama Klobuk i Poljica Vrgorska koje administrativno pripadaju gradovima Ljubuškom i Vrgorcu. Tako druga crkva u Borajni, crkva sv. Petra i Pavla, pripada Župi Grljevići u Gradu Ljubuškom. U naselju Jabuka, rubni zapadni dio pripada Župi Poljica Vrgorska gdje je izgrađena filijalna crkva Velike Gospe. Premda naseljeni dio Jabuke pripada Župi Tihaljina, zbog blizine pohode susjednu filijalu koja se nalazi na njihovu teritoriju.
 
@@ -480,6 +610,42 @@ Dio područja Općine Grude pripada župama Klobuk i Poljica Vrgorska koje admin
 Na području Općine Grude nalaze se 53 groblja: Gorica, Mijaca, Glavica, Bartuluša, Rašeljka, Blaževići, Bili Greb, Drinovački Brdo, Lončaci, Cere, Tolići, Gornji Zorići, Kravar, Barići, Kulina, Podgradinom, Mišija Glavica, Podzelenikovac, Tkanice, Čepe, Leke, Ančići, Dubrava, Nezdravica, Radmilovac, Ćutuci, Seline, Škevina Njiva, Bilići, Krištelica, Krstina, Papak, Medovići, Ledinac, Višnjica, Pavići, Vlačica, Mladenačko groblje, Pogledača, Toličevina, Bracići, Šimići, Gomilice i Dragićina Brdo.
 </div>
 </div>
+
+
+
+<div id="infoZnamenitosti" class="info-dialog">
+
+<div class="info-dialog-close"
+onclick="document.getElementById('infoZnamenitosti').style.display='none'">×</div>
+
+<div class="info-dialog-title">Znamenitosti</div>
+
+<div class="info-dialog-text">
+
+  <div class="dialog-subtitle">Prirodne znamenitosti</div>
+
+Najvažnija prirodna znamenitost Općine Grude su Peć Mlini u Drinovcima. Ravlića Pećina u Peć Mlinima jedno je od najznačajnijih prapovijesnih nalazišta Imote i Bosne i Hercegovine. 
+U tom području nalaze se i Cvitanjske stine, vapnenačke stijene crvene boje, ispod kojih izvire rijeka Tihaljina.<br>
+Kod Blaževića se nalazi udubina Vrbina, a u Drinovcima jezero Krenica, jednakog postanka kao Modro i Crveno jezero kod Imotskog.<br> 
+U Drinovcima se nalazi i umjetno jezero Nuga, stvoreno zbog učestalog poplavljivanja Imotskog polja, nakon čega se taj problem kod Drinovaca djelomično uspio riješiti.<br> 
+Važno je izdvojiti i spomenutu arheološku zbirku u Gorici kao važan i prepoznatljiv simbol Općine Grude.
+<div class="dialog-image-box"><img src="Oznake/prirodne.png" class="dialog-image"></div>
+
+  <div class="dialog-subtitle">Kulturno-povijesne znamenitosti</div>
+Pod kulturno-povijesne spomenike spadaju brojna spomen-obilježja podignuta na čast hrvatskim braniteljima s područja Općine Grude, zavjetni križevi na vrhuncima naselja i rodne kuće Antuna Branka i Stanislava Šimića u Drinovcima te Blage Zadre na Ledincu.<br> 
+Važno je izdvojiti i arheološku zbirku u Gorici kao važan i prepoznatljiv simbol Općine Grude.<br>
+Izdvaja se i misište Bristovica, mjesto nedjeljnog okupljanja vjernika na bogoslužje s područja oko Imotskog polja za vrijeme turske vladavine.<br>    
+U Općini Grude nalaze se i brojni stećci koji svjedoče o životu na ovom području iz vremena Ilira i u srednjem vijeku, kao što su Mandina gomila, nekropole i stećci u sklopu brojnih groblja.
+
+<div class="dialog-image-box"><img src="Oznake/kulturne.png" class="dialog-image"></div>
+
+</div>
+</div>
+
+
+
+
+
 
       <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
       <script src="https://unpkg.com/leaflet.locatecontrol/dist/L.Control.Locate.min.js"></script>
@@ -570,11 +736,21 @@ L.Marker.prototype.setIcon = function(icon) {
       const url3D = "index.html";
       const url2D = "https://virtualtours.virtualno360.hr/F1aR2rgBvf/46190512p&27.02h&80.17t";
 
+function resetirajAktivneGumbe() {
+
+document.querySelectorAll('.toggle-btn').forEach(function(btn) {
+btn.classList.remove('active');
+});
+
+}
+
       function zatvoriOtvoreno(osim) {
 
       var menuPanel = document.querySelector('.menu-panel');
       var searchPanel = document.querySelector('.search-panel');
       var locationPanel = document.querySelector('.location-panel');
+      var mapInfoPanel = document.querySelector('.map-info-panel');
+
       var viewer = document.getElementById('viewer');
       var frame = document.getElementById('frame');
 
@@ -595,38 +771,132 @@ L.Marker.prototype.setIcon = function(icon) {
       locationPanel.style.display = 'none';
       }
 
+      if (osim !== 'infoKarte' && mapInfoPanel) {
+mapInfoPanel.style.display = 'none';
+}
+
       if (osim !== '3d' && viewer) {
       viewer.style.display = 'none';
       frame.src = '';
       prikaz = '3D';
       }
 
+      if (osim !== 'dialog') {
+[
+'infoOpcina',
+'infoPovijest',
+'infoDanas',
+'infoGospodarstvo',
+'infoKultura',
+'infoVjerski',
+'infoZnamenitosti'
+].forEach(function(id) {
+var dialog = document.getElementById(id);
+if (dialog) {
+dialog.style.display = 'none';
+}
+});
+}
+
       }
+
+var infoKarte = L.control({ position: 'topright' });
+
+infoKarte.onAdd = function () {
+var container = L.DomUtil.create('div');
+
+var gumb = L.DomUtil.create('div', 'toggle-btn', container);
+gumb.innerHTML = `
+<img src="Oznake/Grude.svg"
+style="width:24px;height:24px;">
+`;
+gumb.style.display = "flex";
+gumb.style.alignItems = "center";
+gumb.style.justifyContent = "center";
+gumb.title = "Informacije o karti";
+
+var panel = L.DomUtil.create('div', 'map-info-panel', container);
+
+panel.innerHTML = `
+<div class="map-info-title">Web-karta Općine Grude</div>
+<div>Web-karta je izrađena u okviru diplomskog rada "Primjena GIS tehnologija u analizi prostornih podataka i razvoju interaktivne web-karte Općine Grude" na Geodetskom fakultetu Sveučilišta u Zagrebu pod mentorstvom izv. prof. dr. sc. Ivke Kljajić.<br>
+   Prikazuje prostorni raspored najvažnijih prirodnih, društvenih, gospodarskih, kulturnih i infrastrukturnih sadržaja na području Općine Grude. Omogućuje upoznavanje s Općinom Grude i njezinim obilježjima, pregled, pretraživanje i analizu prostornih podataka te pristup informacijama o pojedinim objektima.<br><p>
+   <b>Kartografska projekcija:</b><br>
+   Web-Mercatorova projekcija (EPSG: 3857)<br><p>
+
+<b>Mjesto i vrijeme izrade:</b><br>
+   Zagreb, lipanj 2026.<br><p>
+
+   <b>Izvornici:</b><br>
+   Općina Grude, ESRI World Imagery, OpenStreetMap<br><p>
+
+      <b>Autor:</b><br>
+   Josip Alpeza, univ. bacc. ing. geod. et geoinf.
+
+
+  </div>
+`;
+
+gumb.onclick = function(e) {
+
+L.DomEvent.stopPropagation(e);
+
+var otvoren = panel.style.display === "block";
+
+zatvoriOtvoreno('infoKarte');
+resetirajAktivneGumbe();
+
+if (!otvoren) {
+panel.style.display = "block";
+gumb.classList.add('active');
+} else {
+panel.style.display = "none";
+gumb.classList.remove('active');
+}
+
+};
+
+L.DomEvent.disableClickPropagation(container);
+L.DomEvent.disableScrollPropagation(panel);
+
+return container;
+};
+
+infoKarte.addTo(map);
 
       var gumbPrikaza = L.control({ position: 'topright' });
       gumbPrikaza.onAdd = function () {
       var div = L.DomUtil.create('div', 'toggle-btn');
       div.innerHTML = "3D";
       div.title = "Prikaži u prostoru";
-      div.onclick = function () {
-        zatvoriOtvoreno('3d');
-      const viewer = document.getElementById("viewer");
-      const frame = document.getElementById("frame");
+div.onclick = function (e) {
 
-      if (prikaz === "3D") {
-      prikaz = "2D";
-      div.innerHTML = "2D";
-      div.title = "Prikaži u ravnini";
-      viewer.style.display = "block";
-      frame.src = url2D;
-      } else {
-      prikaz = "3D";
-      div.innerHTML = "3D";
-      div.title = "Prikaži u 2D";
-      viewer.style.display = "none";
-      frame.src = "";
-      }
-      };
+L.DomEvent.stopPropagation(e);
+
+zatvoriOtvoreno('3d');
+resetirajAktivneGumbe();
+
+const viewer = document.getElementById("viewer");
+const frame = document.getElementById("frame");
+
+if (prikaz === "3D") {
+prikaz = "2D";
+div.innerHTML = "2D";
+div.title = "Prikaži u ravnini";
+viewer.style.display = "block";
+frame.src = url2D;
+div.classList.add('active');
+} else {
+prikaz = "3D";
+div.innerHTML = "3D";
+div.title = "Prikaži u prostoru";
+viewer.style.display = "none";
+frame.src = "";
+div.classList.remove('active');
+}
+
+};
+L.DomEvent.disableClickPropagation(div);
       return div;
       };
       gumbPrikaza.addTo(map);
@@ -646,29 +916,53 @@ L.Marker.prototype.setIcon = function(icon) {
 
 panel.innerHTML = `
 <div class="menu-item"
-onclick="document.getElementById('infoOpcina').style.display='block'">
+onclick="zatvoriOtvoreno('dialog'); document.getElementById('infoOpcina').style.display='block'">
 Općina Grude
 </div>
 
 <div class="menu-item"
-onclick="document.getElementById('infoPovijest').style.display='block'">
+onclick="zatvoriOtvoreno('dialog'); document.getElementById('infoPovijest').style.display='block'">
 Povijest Općine Grude
 </div>
 
 <div class="menu-item"
-onclick="document.getElementById('infoDanas').style.display='block'">
+onclick="zatvoriOtvoreno('dialog'); document.getElementById('infoDanas').style.display='block'">
 Javne ustanove</div>
 
 <div class="menu-item"
-onclick="document.getElementById('infoVjerski').style.display='block'">
+onclick="zatvoriOtvoreno('dialog'); document.getElementById('infoGospodarstvo').style.display='block'">
+Gospodarstvo</div>
+
+<div class="menu-item"
+onclick="zatvoriOtvoreno('dialog'); document.getElementById('infoKultura').style.display='block'">
+Kulturne i sportske ustanove</div>
+
+<div class="menu-item"
+onclick="zatvoriOtvoreno('dialog'); document.getElementById('infoVjerski').style.display='block'">
 Vjerske ustanove</div>
+
+<div class="menu-item"
+onclick="zatvoriOtvoreno('dialog'); document.getElementById('infoZnamenitosti').style.display='block'">
+Znamenitosti</div>
 `;
 
-      gumb.onclick = function(e) {
-      L.DomEvent.stopPropagation(e);
-      zatvoriOtvoreno('izbornik');
-      panel.style.display = panel.style.display === "block" ? "none" : "block";
-      };
+gumb.onclick = function(e) {
+
+L.DomEvent.stopPropagation(e);
+
+var otvoren = panel.style.display === "block";
+
+zatvoriOtvoreno('izbornik');
+resetirajAktivneGumbe();
+
+if (!otvoren) {
+panel.style.display = "block";
+gumb.classList.add('active');
+} else {
+panel.style.display = "none";
+}
+
+};
 
       L.DomEvent.disableClickPropagation(container);
 
@@ -709,13 +1003,24 @@ style="width:20px;height:20px;">
       }
       }, 0);
 
-      gumb.onclick = function(e) {
-      L.DomEvent.stopPropagation(e);
-      zatvoriOtvoreno('pretraga');
-      panel.style.display = panel.style.display === "block" ? "none" : "block";
+gumb.onclick = function(e) {
 
-      if (panel.style.display === "block") {
-      setTimeout(function() {
+L.DomEvent.stopPropagation(e);
+
+var otvoren = panel.style.display === "block";
+
+zatvoriOtvoreno('pretraga');
+resetirajAktivneGumbe();
+
+if (!otvoren) {
+panel.style.display = "block";
+gumb.classList.add('active');
+} else {
+panel.style.display = "none";
+}
+
+if (panel.style.display === "block") {
+setTimeout(function() {
       var input = document.getElementById("searchInput");
       input.focus();
       input.oninput = pokreniPretragu;}, 50);
@@ -745,6 +1050,18 @@ var locationPanel = document.querySelector('.location-panel');
 if (locationPanel) {
 locationPanel.style.display = 'none';
 }
+
+locateControl.stop();
+
+var locateButton = document.querySelector('.leaflet-control-locate a');
+
+if (locateButton) {
+locateButton.style.setProperty('background', 'white', 'important');
+}
+
+setTimeout(function() {
+resetirajAktivneGumbe();
+}, 100);
 
 alert("Nije moguće odrediti vaš položaj. Provjerite jesu li usluge lokacije uključene.");
 
@@ -783,7 +1100,9 @@ var locateButton = document.querySelector('.leaflet-control-locate a');
 if (locateButton) {
 
 locateButton.addEventListener('click', function() {
-  zatvoriOtvoreno('lociranje');
+
+zatvoriOtvoreno('lociranje');
+resetirajAktivneGumbe();
 
 var locationPanel = document.querySelector('.location-panel');
 
@@ -796,6 +1115,8 @@ document.querySelector('.leaflet-control-locate.requesting');
 
 if (active) {
 
+locateButton.style.setProperty('background', '#FFF2CC', 'important');
+
 if (window.lastUserLocation) {
 prikaziNajblizeObjekte(window.lastUserLocation);
 
@@ -805,6 +1126,8 @@ locationPanel.style.display = 'block';
 }
 
 } else {
+
+locateButton.style.setProperty('background', 'white', 'important');
 
 if (locationPanel) {
 locationPanel.style.display = 'none';
@@ -827,11 +1150,30 @@ map.on('locationfound', function(e) {
 
   window.lastUserLocation = e.latlng;
 
+  var locateButton = document.querySelector('.leaflet-control-locate a');
+
+if (locateButton) {
+locateButton.style.setProperty('background', '#FFF2CC', 'important');
+}
+
 var userLatLng = e.latlng;
 
 if (!graniceObuhvata.contains(userLatLng)) {
+
 alert("Nalazite se izvan područja Općine Grude.");
+
 locateControl.stop();
+window.lastUserLocation = null;
+
+var locateButton = document.querySelector('.leaflet-control-locate a');
+
+if (locateButton) {
+locateButton.style.setProperty('background', 'white', 'important');
+}
+
+setTimeout(function() {
+resetirajAktivneGumbe();
+}, 100);
 
 var locationPanel = document.querySelector('.location-panel');
 
@@ -851,6 +1193,9 @@ locationPanel.style.display = 'block';
 }
 
 });
+
+
+
 
       var objektiZaPretragu = [];
 
@@ -1029,7 +1374,15 @@ locationPanel.style.display = 'block';
 
       map.on('click', function() {
 
-      var panel = document.querySelector('.menu-panel');
+resetirajAktivneGumbe();
+
+var mapInfoPanel = document.querySelector('.map-info-panel');
+
+if (mapInfoPanel) {
+mapInfoPanel.style.display = 'none';
+}
+
+var panel = document.querySelector('.menu-panel');
 
       if (panel) {
       panel.style.display = 'none';
@@ -1052,7 +1405,7 @@ if (locationPanel) {
 locationPanel.style.display = 'none';
 }
 
-['infoOpcina','infoPovijest','infoDanas', 'infoVjerski'].forEach(function(id){
+['infoOpcina','infoPovijest','infoDanas', 'infoGospodarstvo', 'infoKultura', 'infoVjerski',  'infoZnamenitosti'].forEach(function(id){
 
 var dialog = document.getElementById(id);
 
