@@ -562,14 +562,8 @@ style="width:20px;height:20px;">
 
 var locateControl = L.control.locate({
 position: 'topleft',
-setView: 'once',
-flyTo: true,
-keepCurrentZoomLevel: false,
-initialZoomLevel: 16,
-drawCircle: true,
-drawMarker: true,
-showCompass: true,
-
+setView: false,
+flyTo: false,
 strings: {
 title: "Prikaži lokaciju",
 popup: "Nalazite se unutar {distance} m od ovog mjesta.",
@@ -620,7 +614,49 @@ L.DomEvent.disableClickPropagation(results);
 
 }, 0);
 
+var locateButton = document.querySelector('.leaflet-control-locate a');
+
+if (locateButton) {
+
+locateButton.addEventListener('click', function() {
+
+var locationPanel = document.querySelector('.location-panel');
+
+setTimeout(function() {
+
+var active =
+document.querySelector('.leaflet-control-locate.active') ||
+document.querySelector('.leaflet-control-locate.following') ||
+document.querySelector('.leaflet-control-locate.requesting');
+
+if (active) {
+
+if (window.lastUserLocation) {
+prikaziNajblizeObjekte(window.lastUserLocation);
+
+if (locationPanel) {
+locationPanel.style.display = 'block';
+}
+}
+
+} else {
+
+if (locationPanel) {
+locationPanel.style.display = 'none';
+}
+
+}
+
+}, 200);
+
+});
+
+}
+
 map.on('locationfound', function(e) {
+
+  window.lastUserLocation = e.latlng;
+
 var userLatLng = e.latlng;
 
 if (!graniceObuhvata.contains(userLatLng)) {
@@ -628,6 +664,7 @@ alert("Nalazite se izvan područja Općine Grude.");
 locateControl.stop();
 
 var locationPanel = document.querySelector('.location-panel');
+
 if (locationPanel) {
 locationPanel.style.display = 'none';
 }
@@ -635,13 +672,13 @@ locationPanel.style.display = 'none';
 return;
 }
 
+prikaziNajblizeObjekte(userLatLng);
+
 var locationPanel = document.querySelector('.location-panel');
 
 if (locationPanel) {
 locationPanel.style.display = 'block';
 }
-
-prikaziNajblizeObjekte(userLatLng);
 
 });
 
@@ -839,15 +876,12 @@ prikaziNajblizeObjekte(userLatLng);
       }
       }
 
-      var locationPanel = document.querySelector('.location-panel');
+ var locationPanel = document.querySelector('.location-panel');
 
-      if (locationPanel) {
-      locationPanel.style.display = 'none';
-      }
-
-if (locateControl) {
-locateControl.stop();
+if (locationPanel) {
+locationPanel.style.display = 'none';
 }
+
       var dialog = document.getElementById('infoOpcina');
 
       if (dialog) {
