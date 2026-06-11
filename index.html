@@ -574,6 +574,18 @@ popup: "Nalazite se unutar {distance} m od ovog mjesta.",
 outsideMapBoundsMsg: "Nalazite se izvan područja Općine Grude."
 },
 
+onLocationError: function(e) {
+
+var locationPanel = document.querySelector('.location-panel');
+
+if (locationPanel) {
+locationPanel.style.display = 'none';
+}
+
+alert("Nije moguće odrediti vaš položaj. Provjerite jesu li usluge lokacije uključene.");
+
+},
+
 locateOptions: {
 enableHighAccuracy: true,
 maximumAge: 5000,
@@ -628,18 +640,6 @@ locationPanel.style.display = 'block';
 }
 
 prikaziNajblizeObjekte(userLatLng);
-
-});
-
-map.on('locationerror', function(e) {
-
-var locationPanel = document.querySelector('.location-panel');
-
-if (locationPanel) {
-locationPanel.style.display = 'none';
-}
-
-alert("Nije moguće odrediti vaš položaj. Provjerite jesu li usluge lokacije uključene.");
 
 });
 
