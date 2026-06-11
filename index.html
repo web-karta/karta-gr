@@ -610,10 +610,6 @@ L.DomEvent.disableScrollPropagation(results);
 L.DomEvent.disableClickPropagation(results);
 }
 
-}
-
-}, 0);
-
 var locateButton = document.querySelector('.leaflet-control-locate a');
 
 if (locateButton) {
@@ -652,6 +648,11 @@ locationPanel.style.display = 'none';
 });
 
 }
+
+}
+
+}, 0);
+
 
 map.on('locationfound', function(e) {
 
