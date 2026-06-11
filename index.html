@@ -286,20 +286,21 @@ border: none !important;
 outline: none !important;
 }
 @media (max-width: 768px) {
-  .leaflet-control-locate .location-panel {
+
+  .location-panel {
     position: fixed !important;
     left: 50% !important;
-    right: auto !important;
-    top: auto !important;
     bottom: 18px !important;
+    top: auto !important;
     transform: translateX(-50%) !important;
     z-index: 1200 !important;
   }
 
-  .leaflet-control-locate .nearest-results {
+  .nearest-results {
     width: 300px;
     max-height: 130px;
   }
+
 }
     </style>
 
@@ -562,7 +563,7 @@ position: 'topleft',
 setView: 'once',
 flyTo: true,
 keepCurrentZoomLevel: false,
-initialZoomLevel: 18,
+initialZoomLevel: 16,
 drawCircle: true,
 drawMarker: true,
 showCompass: true,
@@ -627,6 +628,18 @@ locationPanel.style.display = 'block';
 }
 
 prikaziNajblizeObjekte(userLatLng);
+
+});
+
+map.on('locationerror', function(e) {
+
+var locationPanel = document.querySelector('.location-panel');
+
+if (locationPanel) {
+locationPanel.style.display = 'none';
+}
+
+alert("Nije moguće odrediti vaš položaj. Provjerite jesu li usluge lokacije uključene.");
 
 });
 
