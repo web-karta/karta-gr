@@ -4,6 +4,7 @@
       <meta charset="utf-8">
       <title>Web-karta Općine Grude</title>
       <link rel="icon" type="image/svg+xml" href="Oznake/Grude.svg">
+      <link rel="preload" as="image" href="Oznake/Pretraga.svg">
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
       <link href="https://fonts.googleapis.com/css2?family=PT+Sans:wght@400;700&display=swap" rel="stylesheet">
@@ -515,11 +516,12 @@ L.Marker.prototype.setIcon = function(icon) {
       container.style.marginTop = '10px';
 
       var gumb = L.DomUtil.create('div', 'toggle-btn', container);
-      gumb.innerHTML = "🔎︎";
-      gumb.style.display = "flex";
+gumb.innerHTML = `
+<img src="Oznake/Pretraga.svg"
+style="width:20px;height:20px;">
+`;gumb.style.display = "flex";
       gumb.style.alignItems = "center";
       gumb.style.justifyContent = "center";
-      gumb.style.transform = "rotate(-90deg)";
       gumb.style.fontSize = "20px";
       gumb.title = "Pretraži";
 
