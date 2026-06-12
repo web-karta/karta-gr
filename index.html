@@ -411,11 +411,11 @@ left: 50%;
 bottom: 18px;
 transform: translateX(-50%);
 
-width: calc(100vw - 20px);
-max-width: 500px;
+width: calc(100vw - 40px);
+max-width: 340px;
 
-height: 150px;
-max-height: 150px;
+height: 50vh;
+max-height: 50vh;
 }
 
 }
@@ -785,16 +785,13 @@ z-index: 9999 !important;
 
 @media (max-width: 768px) {
 
-.leaflet-control-attribution {
-left: 10px !important;
+.leaflet-bottom.leaflet-left {
+left: 0 !important;
 right: auto !important;
-bottom: 10px !important;
 }
 
-.leaflet-control-scale {
-left: auto !important;
-right: 10px !important;
-bottom: 10px !important;
+.leaflet-bottom.leaflet-right {
+right: 0 !important;
 }
 
 }
@@ -1520,12 +1517,11 @@ setTimeout(function() {
 
       pretrazi.addTo(map);
 
-          L.control.scale(
-      {position: 'bottomleft', 
-      imperial: false, 
-      metric: true
-      })
-      .addTo(map);
+L.control.scale({
+position: 'bottomright',
+imperial: false,
+metric: true
+}).addTo(map);
 
 var locateControl = L.control.locate({
 position: 'topleft',
