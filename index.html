@@ -6,9 +6,11 @@
       <link rel="icon" type="image/svg+xml" href="Oznake/Grude.svg">
       <link rel="preload" as="image" href="Oznake/Pretraga.svg">
       <link rel="preload" as="image" href="Oznake/slojevi.png">
+      <link rel="preload" as="image" href="Oznake/lokacija.svg">
 <link rel="preload" as="image" href="Oznake/Grude.svg">
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+      <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.css">
       <link href="https://fonts.googleapis.com/css2?family=PT+Sans:wght@400;700&display=swap" rel="stylesheet">
       <link href="https://fonts.googleapis.com/css2?family=PT+Sans:wght@400;700&family=PT+Serif:wght@400;700&display=swap" rel="stylesheet">
       <link rel="stylesheet" href="https://unpkg.com/leaflet.locatecontrol/dist/L.Control.Locate.min.css">
@@ -111,6 +113,14 @@ margin-bottom: 1px;
       }
 
 
+      @media (max-width: 768px) {
+
+.menu-item {
+padding: 10px 10px;
+font-size: 13px;
+}
+
+}
 .info-dialog {
 position: fixed;
 top: 10px;
@@ -231,7 +241,7 @@ margin-bottom: 10px;
       box-shadow: 0 1px 4px rgba(0,0,0,0.3);
       padding: 0 14px;
       font-family: "PT Sans", sans-serif;
-      font-size: 14px;
+      font-size: 13px;
       outline: none;
       }
 
@@ -243,8 +253,10 @@ margin-bottom: 10px;
       font-family: "PT Sans", sans-serif;
       font-size: 13px;
       max-height: 240px;
-      overflow-y: auto;
-      display: none;
+      max-width: 260px;
+      width: 260px;
+overflow-y: auto;
+overflow-x: hidden;
       }
 
       @media (max-width: 768px) {
@@ -255,15 +267,24 @@ width: 240px;
 
 .search-results {
 width: 240px;
+max-width: 240px;
 }
 
 }
 
-      .search-result {
-      padding: 8px 12px;
-      cursor: pointer;
-      border-bottom: 1px solid rgb(230,230,230);
-      }
+.search-result {
+padding: 8px 6px;
+cursor: pointer;
+border-bottom: 1px solid rgb(230,230,230);
+
+white-space: nowrap;
+overflow: hidden;
+text-overflow: ellipsis;
+
+position: relative;
+}
+
+
 
       .search-result:hover {
       background: rgb(235,235,235);
@@ -340,12 +361,12 @@ text-decoration: none !important;
 }
 
 .leaflet-control-locate a::after {
-  content: "➤";
-  display: block;
-  font-size: 20px;
-  color: black;
-  line-height: 1;
-  transform: translateY(-2px) rotate(-45deg);
+content: "";
+display: block;
+width: 20px;
+height: 20px;
+background: url("Oznake/lokacija.svg") center center / contain no-repeat;
+transform: none;
 }
 
 .leaflet-control-locate.active a,
@@ -590,6 +611,160 @@ font-size: 14px !important;
         vertical-align: middle;
         }
 
+        .routing-panel {
+position: absolute;
+top: 0;
+left: 54px;
+display: none;
+width: 300px;
+background: white;
+border-radius: 18px;
+box-shadow: 0 1px 4px rgba(0,0,0,0.3);
+padding: 14px;
+box-sizing: border-box;
+font-family: "PT Sans", sans-serif;
+z-index: 1200;
+}
+
+.routing-title {
+font-family: "PT Serif", serif;
+font-size: 15px;
+font-weight: 700;
+text-align: center;
+margin-bottom: 10px;
+}
+
+.routing-label {
+font-size: 13px;
+font-weight: 700;
+margin: 8px 0 4px 0;
+}
+
+.routing-input {
+width: 100%;
+height: 34px;
+box-sizing: border-box;
+border: 1px solid rgb(220,220,220);
+border-radius: 10px;
+padding: 0 10px;
+font-family: "PT Sans", sans-serif;
+font-size: 13px;
+outline: none;
+}
+
+.routing-suggestions {
+margin-top: 4px;
+background: rgb(250,250,250);
+border-radius: 10px;
+max-height: 120px;
+overflow-y: auto;
+display: none;
+font-size: 13px;
+}
+
+.routing-suggestion {
+padding: 8px 6px;
+cursor: pointer;
+border-bottom: 1px solid rgb(230,230,230);
+
+display: flex;
+align-items: center;
+gap: 8px;
+
+white-space: nowrap;
+overflow: hidden;
+text-overflow: ellipsis;
+}
+
+.routing-suggestion img {
+width: 16px;
+height: 16px;
+flex: 0 0 auto;
+}
+
+.routing-suggestion:hover {
+background: rgb(235,235,235);
+}
+
+.routing-actions {
+display: flex;
+gap: 6px;
+margin-top: 6px;
+}
+
+.routing-actions button,
+.routing-clear {
+border: none;
+border-radius: 9px;
+padding: 7px 8px;
+font-family: "PT Sans", sans-serif;
+font-size: 13px;
+cursor: pointer;
+background: rgb(235,235,235);
+}
+
+.routing-clear {
+width: 100%;
+margin-top: 10px;
+}
+
+.routing-status {
+font-size: 13px;
+margin-top: 8px;
+color: #444;
+}
+
+.leaflet-routing-container {
+display: none !important;
+}
+
+
+@media (max-width: 768px) {
+
+.routing-panel {
+position: fixed !important;
+left: 50% !important;
+right: auto !important;
+top: auto !important;
+bottom: 18px !important;
+transform: translateX(-50%) !important;
+
+width: calc(100vw - 20px);
+max-width: 330px;
+max-height: 55vh;
+overflow-y: auto;
+
+z-index: 1300;
+}
+
+.routing-input {
+height: 36px;
+}
+
+.routing-actions button,
+.routing-clear {
+min-height: 34px;
+}
+
+#routingClose {
+padding: 8px;
+margin: -8px;
+}
+
+}
+
+@media (max-width: 768px) {
+
+.location-panel {
+z-index: 9999 !important;
+}
+
+}
+
+.leaflet-control-scale,
+.leaflet-control-attribution {
+z-index: 500 !important;
+}
     </style>
 
   </head>
@@ -830,6 +1005,7 @@ U Općini Grude nalaze se i brojni stećci koji svjedoče o životu na ovom podr
 
 
       <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+      <script src="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.min.js"></script>
       <script src="https://unpkg.com/leaflet.locatecontrol/dist/L.Control.Locate.min.js"></script>
       <script src="Podatci/crkve.js"></script>
       <script src="Podatci/groblja.js"></script>
@@ -895,6 +1071,9 @@ var aktivnaPodloga = cartoPodloga;
 const mjeriloOznake = L.Marker.prototype.setIcon;
 
 L.Marker.prototype.setIcon = function(icon) {
+  if (this.options.fixedSize) {
+return mjeriloOznake.call(this, icon);
+}
 
   if (!icon || !icon.options || !icon.options.iconUrl) {
     return mjeriloOznake.call(this, icon);
@@ -941,7 +1120,13 @@ L.Marker.prototype.setIcon = function(icon) {
 function resetirajAktivneGumbe() {
 
 document.querySelectorAll('.toggle-btn').forEach(function(btn) {
+
+if (btn.classList.contains('routing-toggle-btn')) {
+return;
+}
+
 btn.classList.remove('active');
+
 });
 
 }
@@ -951,7 +1136,9 @@ btn.classList.remove('active');
       var menuPanel = document.querySelector('.menu-panel');
       var searchPanel = document.querySelector('.search-panel');
       var locationPanel = document.querySelector('.location-panel');
-      var mapInfoPanel = document.querySelector('.map-info-panel');
+var mapInfoPanel = document.querySelector('.map-info-panel');
+var routingPanel = document.querySelector('.routing-panel');
+var routingBtn = document.querySelector('.routing-toggle-btn');
 var layersPanel = document.querySelector('.leaflet-control-layers');
 var layersBtn = document.querySelector('.layers-toggle-btn');
 
@@ -977,6 +1164,15 @@ var layersBtn = document.querySelector('.layers-toggle-btn');
 
       if (osim !== 'infoKarte' && mapInfoPanel) {
 mapInfoPanel.style.display = 'none';
+}
+
+if (osim !== 'routing' && routingPanel) {
+routingPanel.style.display = 'none';
+resetirajRouting();
+}
+
+if (osim !== 'routing' && routingBtn) {
+routingBtn.classList.remove('active');
 }
 
 if (osim !== 'layers' && layersPanel) {
@@ -1340,6 +1536,471 @@ watch: true
 }
 }).addTo(map);
 
+var routingControl = null;
+var routingOdabirAktivan = null;
+var routingFrom = null;
+var routingTo = null;
+var routingFromMarker = null;
+var routingToMarker = null;
+var routingFromJeMojaLokacija = false;
+var zadnjeRerutiranje = 0;
+
+var routingGumb = L.control({ position: 'topleft' });
+
+routingGumb.onAdd = function () {
+var container = L.DomUtil.create('div');
+container.style.marginTop = '10px';
+
+var gumb = L.DomUtil.create('div', 'toggle-btn routing-toggle-btn', container);
+gumb.innerHTML = `<span style="display:block;transform:translateY(-2px) rotate(-45deg);">➤</span>`;
+gumb.title = "Planiranje rute";
+
+var panel = L.DomUtil.create('div', 'routing-panel', container);
+
+panel.innerHTML = `
+<div style="
+position:relative;
+height:0;
+margin-bottom:0;
+">
+
+<span id="routingClose" style="
+position:absolute;
+right:2px;
+top:0px;
+cursor:pointer;
+font-size:18px;
+font-weight:700;
+line-height:1;
+">×</span>
+
+</div>
+
+<div class="routing-label">Polazište</div>
+<input id="routingFromInput" class="routing-input" placeholder="Odaberi polazište...">
+<div id="routingFromSuggestions" class="routing-suggestions"></div>
+<div class="routing-actions">
+<button id="routingFromMap">Odaberi na karti</button>
+<button id="routingFromLocation">Moja lokacija</button>
+</div>
+
+<div class="routing-label">Odredište</div>
+<input id="routingToInput" class="routing-input" placeholder="Odaberi odredište...">
+<div id="routingToSuggestions" class="routing-suggestions"></div>
+<div class="routing-actions">
+<button id="routingToMap">Odaberi na karti</button>
+</div>
+
+<button id="routingClear" class="routing-clear">Ukloni rutu</button>
+<div id="routingStatus" class="routing-status"></div>
+`;
+
+gumb.onclick = function(e) {
+L.DomEvent.stopPropagation(e);
+
+var otvoren = panel.style.display === "block";
+
+zatvoriOtvoreno('routing');
+resetirajAktivneGumbe();
+
+if (!otvoren) {
+panel.style.display = "block";
+gumb.classList.add('active');
+} else {
+panel.style.display = "none";
+resetirajRouting();
+gumb.classList.remove('active');
+}
+};
+
+L.DomEvent.disableClickPropagation(container);
+L.DomEvent.disableScrollPropagation(panel);
+
+setTimeout(function() {
+inicijalizirajRoutingPanel();
+}, 0);
+
+return container;
+};
+
+routingGumb.addTo(map);
+
+function postaviRoutingStatus(tekst) {
+var el = document.getElementById("routingStatus");
+if (el) el.textContent = tekst || "";
+}
+
+function najblizaAdresaZaRouting(latlng) {
+
+var najbliza = null;
+var najmanjaUdaljenost = Infinity;
+
+objektiZaPretragu.forEach(function(obj) {
+
+if (!obj.ikonaUrl || !obj.ikonaUrl.includes("Adresniregistar")) {
+return;
+}
+
+if (!obj.layer || !obj.layer.getLatLng) {
+return;
+}
+
+var udaljenost = latlng.distanceTo(obj.layer.getLatLng());
+
+if (udaljenost < najmanjaUdaljenost) {
+najmanjaUdaljenost = udaljenost;
+najbliza = obj;
+}
+
+});
+
+if (najbliza) {
+return "U blizini: " + najbliza.naziv;
+}
+
+return "Odabrana točka";
+}
+
+function resetirajRouting() {
+
+if (routingControl) {
+map.removeControl(routingControl);
+routingControl = null;
+}
+
+if (routingFromMarker) {
+map.removeLayer(routingFromMarker);
+routingFromMarker = null;
+}
+
+if (routingToMarker) {
+map.removeLayer(routingToMarker);
+routingToMarker = null;
+}
+
+routingFrom = null;
+routingTo = null;
+routingOdabirAktivan = null;
+routingFromJeMojaLokacija = false;
+zadnjeRerutiranje = 0;
+
+var fromInput = document.getElementById("routingFromInput");
+var toInput = document.getElementById("routingToInput");
+var fromSug = document.getElementById("routingFromSuggestions");
+var toSug = document.getElementById("routingToSuggestions");
+
+if (fromInput) fromInput.value = "";
+if (toInput) toInput.value = "";
+if (fromSug) {
+fromSug.innerHTML = "";
+fromSug.style.display = "none";
+}
+if (toSug) {
+toSug.innerHTML = "";
+toSug.style.display = "none";
+}
+
+postaviRoutingStatus("");
+}
+
+function postaviRoutingTocku(tip, latlng, naziv) {
+if (tip === "from") {
+routingFrom = latlng;
+
+if (naziv !== "Moja lokacija") {
+routingFromJeMojaLokacija = false;
+}
+
+var inputFrom = document.getElementById("routingFromInput");
+
+if (inputFrom) {
+inputFrom.value = naziv || najblizaAdresaZaRouting(latlng);
+}
+
+if (routingFromMarker) map.removeLayer(routingFromMarker);
+routingFromMarker = L.marker(latlng, {
+fixedSize: true,
+icon: L.icon({
+iconUrl: 'Oznake/lokacija.svg',
+iconSize: [20, 20],
+iconAnchor: [10, 10]
+})
+}).addTo(map).bindPopup("Polazište");}
+
+if (tip === "to") {
+routingTo = latlng;
+
+var inputTo = document.getElementById("routingToInput");
+
+if (inputTo) {
+inputTo.value = naziv || najblizaAdresaZaRouting(latlng);
+}
+
+if (routingToMarker) map.removeLayer(routingToMarker);
+routingToMarker = L.marker(latlng, {
+fixedSize: true,
+icon: L.icon({
+iconUrl: 'Oznake/lokacija.svg',
+iconSize: [20, 20],
+iconAnchor: [10, 10]
+})
+}).addTo(map).bindPopup("Odredište");}
+
+pokreniRoutingAkoJeSpreman();
+}
+
+function pokreniRoutingAkoJeSpreman() {
+if (!routingFrom || !routingTo) return;
+
+if (routingControl) {
+map.removeControl(routingControl);
+routingControl = null;
+}
+
+routingControl = L.Routing.control({
+waypoints: [
+routingFrom,
+routingTo
+],
+routeWhileDragging: false,
+
+createMarker: function() {
+return null;
+},
+
+addWaypoints: false,
+show: false,
+fitSelectedRoutes: true,
+lineOptions: {
+styles: [
+{ color: "#D32F2F", weight: 6, opacity: 0.85 }
+]
+}
+}).addTo(map);
+
+routingControl.on('routesfound', function(e) {
+
+var ruta = e.routes[0];
+var udaljenost = ruta.summary.totalDistance;
+var vrijeme = ruta.summary.totalTime;
+
+var tekstUdaljenost;
+
+if (udaljenost < 1000) {
+tekstUdaljenost = Math.round(udaljenost) + " m";
+} else {
+tekstUdaljenost = (udaljenost / 1000).toFixed(2) + " km";
+}
+
+var minute = Math.round(vrijeme / 60);
+var tekstVrijeme;
+
+if (minute < 60) {
+tekstVrijeme = minute + " min.";
+} else {
+var sati = Math.floor(minute / 60);
+var ostatakMinuta = minute % 60;
+tekstVrijeme = sati + " h " + ostatakMinuta + " min.";
+}
+
+postaviRoutingStatus("Duljina: " + tekstUdaljenost + " | Vrijeme: " + tekstVrijeme);
+
+});
+
+routingControl.on('routingerror', function() {
+postaviRoutingStatus("Ruta nije pronađena.");
+});
+}
+
+function prikaziRoutingPrijedloge(inputId, suggestionsId, tip) {
+var input = document.getElementById(inputId);
+var box = document.getElementById(suggestionsId);
+
+if (!input || !box) return;
+
+input.oninput = function() {
+var upit = input.value.toLowerCase().trim();
+box.innerHTML = "";
+
+if (upit.length < 2) {
+box.style.display = "none";
+return;
+}
+
+var pogodci = objektiZaPretragu.filter(function(obj) {
+return obj.tekst.includes(upit);
+}).slice(0, 8);
+
+if (pogodci.length === 0) {
+box.innerHTML = `<div class="routing-suggestion">Nema rezultata</div>`;
+box.style.display = "block";
+return;
+}
+
+pogodci.forEach(function(obj) {
+var div = document.createElement("div");
+div.className = "routing-suggestion";
+
+div.innerHTML = `
+<img src="${obj.ikonaUrl}" alt="">
+<span>${obj.naziv}</span>
+`;
+
+div.onclick = function(e) {
+L.DomEvent.stopPropagation(e);
+
+box.innerHTML = "";
+box.style.display = "none";
+
+postaviRoutingTocku(tip, obj.layer.getLatLng(), obj.naziv);
+};
+
+box.appendChild(div);
+});
+
+box.style.display = "block";
+};
+}
+
+function inicijalizirajRoutingPanel() {
+prikaziRoutingPrijedloge("routingFromInput", "routingFromSuggestions", "from");
+prikaziRoutingPrijedloge("routingToInput", "routingToSuggestions", "to");
+
+var routingClose = document.getElementById("routingClose");
+
+if (routingClose) {
+
+routingClose.addEventListener("click", function(e) {
+
+e.preventDefault();
+e.stopPropagation();
+
+var routingPanel = document.querySelector('.routing-panel');
+var routingBtn = document.querySelector('.routing-toggle-btn');
+
+if (routingPanel) {
+routingPanel.style.display = 'none';
+}
+
+resetirajRouting();
+
+if (routingBtn) {
+routingBtn.classList.remove('active');
+}
+
+});
+
+}
+
+var fromMap = document.getElementById("routingFromMap");
+var toMap = document.getElementById("routingToMap");
+var fromLocation = document.getElementById("routingFromLocation");
+var clear = document.getElementById("routingClear");
+
+if (fromMap) {
+fromMap.onclick = function(e) {
+e.stopPropagation();
+routingOdabirAktivan = "from";
+};
+}
+
+if (toMap) {
+toMap.onclick = function(e) {
+e.stopPropagation();
+routingOdabirAktivan = "to";
+};
+}
+
+if (fromLocation) {
+fromLocation.onclick = function(e) {
+e.stopPropagation();
+
+if (window.lastUserLocation) {
+routingFromJeMojaLokacija = true;
+
+postaviRoutingTocku(
+"from",
+window.lastUserLocation,
+"Moja lokacija"
+);return;
+}
+
+if (navigator.geolocation) {
+
+navigator.geolocation.getCurrentPosition(function(pos) {
+var latlng = L.latLng(pos.coords.latitude, pos.coords.longitude);
+postaviRoutingTocku("from", latlng, "Moja lokacija");
+}, function() {
+postaviRoutingStatus("Lokacija nije dostupna.");
+}, {
+enableHighAccuracy: true,
+timeout: 10000,
+maximumAge: 5000
+});
+}
+};
+}
+
+if (clear) {
+clear.onclick = function(e) {
+e.stopPropagation();
+
+if (routingControl) {
+map.removeControl(routingControl);
+routingControl = null;
+}
+
+if (routingFromMarker) {
+map.removeLayer(routingFromMarker);
+routingFromMarker = null;
+}
+
+if (routingToMarker) {
+map.removeLayer(routingToMarker);
+routingToMarker = null;
+}
+
+routingFrom = null;
+routingTo = null;
+routingOdabirAktivan = null;
+
+document.getElementById("routingFromInput").value = "";
+document.getElementById("routingToInput").value = "";
+};
+}
+}
+
+map.on('click', function(e) {
+
+var routingPanel = document.querySelector('.routing-panel');
+
+if (!routingOdabirAktivan && routingPanel && routingPanel.style.display === "block") {
+
+if (!routingFrom) {
+postaviRoutingTocku("from", e.latlng, null);
+return;
+}
+
+if (!routingTo) {
+postaviRoutingTocku("to", e.latlng, null);
+postaviRoutingStatus("");
+return;
+}
+
+}
+
+if (!routingOdabirAktivan) return;
+
+if (routingOdabirAktivan === "from") {
+postaviRoutingTocku("from", e.latlng, null);}
+
+if (routingOdabirAktivan === "to") {
+postaviRoutingTocku("to", e.latlng, null);
+}
+
+routingOdabirAktivan = null;
+postaviRoutingStatus("");
+});
 setTimeout(function() {
 
 var locateContainer = document.querySelector('.leaflet-control-locate');
@@ -1410,10 +2071,27 @@ locationPanel.style.display = 'none';
 
 }, 0);
 
-
 map.on('locationfound', function(e) {
 
   window.lastUserLocation = e.latlng;
+
+  if (routingFromJeMojaLokacija && routingTo) {
+
+var sada = Date.now();
+
+if (sada - zadnjeRerutiranje > 8000) {
+zadnjeRerutiranje = sada;
+
+routingFrom = e.latlng;
+
+if (routingFromMarker) {
+routingFromMarker.setLatLng(e.latlng);
+}
+
+pokreniRoutingAkoJeSpreman();
+}
+
+}
 
   var locateButton = document.querySelector('.leaflet-control-locate a');
 
@@ -1506,9 +2184,13 @@ locationPanel.style.display = 'block';
       }
 
 
-      var pogodci = objektiZaPretragu.filter(function(obj) {
-      return obj.tekst.includes(upit);
-      });
+var rijeciUpita = upit.split(/\s+/).filter(Boolean);
+
+var pogodci = objektiZaPretragu.filter(function(obj) {
+return rijeciUpita.every(function(rijec) {
+return obj.tekst.includes(rijec);
+});
+});
 
       if (pogodci.length === 0) {
       results.innerHTML = `<div class="search-result">Nema rezultata</div>`;
@@ -1597,29 +2279,21 @@ justify-content:space-between;
 <span>Najbliži objekti:</span>
 
 <button id="zoomNaLokaciju" style="
-padding:4px 8px;
-border:none;
-border-radius:8px;
-cursor:pointer;
 display:flex;
 align-items:center;
 gap:6px;
-font-size:12px;
+padding:6px 10px;
+border:none;
+border-radius:8px;
+cursor:pointer;
 font-family:'PT Sans',sans-serif;
+font-size:13px;
 ">
 
-<span style="
-display:block;
-transform:rotate(-45deg);
-font-size:16px;
-line-height:1;
-">
-➤
-</span>
+<img src="Oznake/lokacija.svg"
+style="width:18px;height:18px;">
 
-<span>
-Prikaži lokaciju
-</span>
+<span>Prikaži lokaciju</span>
 
 </button>
 </div>
@@ -1683,7 +2357,11 @@ duration: 0.8
       });
       }
 
-      map.on('click', function() {
+map.on('click', function() {
+
+if (routingOdabirAktivan) {
+return;
+}
 
 resetirajAktivneGumbe();
 
@@ -1721,6 +2399,12 @@ var panel = document.querySelector('.menu-panel');
       if (searchInput) {
       searchInput.value = '';
       }
+      var searchResults = document.getElementById('searchResults');
+
+if (searchResults) {
+searchResults.innerHTML = '';
+searchResults.style.display = 'none';
+}
       }
 
  var locationPanel = document.querySelector('.location-panel');
@@ -2575,8 +3259,8 @@ iscrtajVidljiveAdresneIkone();
 
 
       var podloge = {
-"CARTO Voyager": cartoPodloga,
-"ESRI World Imagery": esriPodloga
+"Kartografska podloga": cartoPodloga,
+"Satelitska podloga": esriPodloga
 };
 
 var tematskiSlojevi = {
@@ -2599,7 +3283,7 @@ var tematskiSlojevi = {
 '<img src="Oznake/Crkve.svg"> Crkve': slojCrkve,
 '<img src="Oznake/Groblja.svg"> Groblja': slojGroblja,
 
-'<img src="Oznake/Srustanove.svg"> Sportsko-rekreacijske ustanove': slojSRUstanove,
+'<img src="Oznake/SRustanove.svg"> Sportsko-rekreacijske ustanove': slojSRUstanove,
 
 '<img src="Oznake/Poduzeca.svg"> Poduzeća': slojPoduzeca,
 '<img src="Oznake/Trgovine.svg"> Trgovine': slojTrgovine,
