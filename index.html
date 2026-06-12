@@ -7,6 +7,8 @@
       <link rel="preload" as="image" href="Oznake/Pretraga.svg">
       <link rel="preload" as="image" href="Oznake/slojevi.png">
       <link rel="preload" as="image" href="Oznake/lokacija.svg">
+      <link rel="preload" as="image" href="Oznake/bus.svg">
+<link rel="preload" as="image" href="Oznake/leaflet.png">
 <link rel="preload" as="image" href="Oznake/Grude.svg">
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
@@ -542,12 +544,22 @@ font-size: 14px !important;
 
 }
 
-        .leaflet-control-scale {
-        left: auto !important;
-        right: 10px !important;
-        font-family: 'PT Sans', sans-serif !important;
-        bottom: 8px !important;
-        }
+.leaflet-control-scale {
+left: 5.25px !important;
+right: auto !important;
+bottom: 10px !important;
+font-family: 'PT Sans', sans-serif !important;
+}
+
+@media (max-width: 768px) {
+
+.leaflet-control-scale {
+left: auto !important;
+right: 10px !important;
+bottom: 10px !important;
+}
+
+}
 
 
         #koordinatni-okvir {
@@ -826,7 +838,9 @@ z-index: 400 !important;
 .routing-panel {
 z-index: 9999 !important;
 }
-
+.layers-icon {
+filter: brightness(0);
+}
 }
 
 @media (max-width: 768px) {
@@ -870,7 +884,12 @@ right: 0 !important;
 
 
       <div id="infoOpcina" class="info-dialog">
-      <div class="info-dialog-close" onclick="document.getElementById('infoOpcina').style.display='none'">×</div>
+   <div class="info-dialog-close"
+onclick="
+document.getElementById('infoOpcina').style.display='none';
+var aktivni = document.querySelector('.toggle-btn.active');
+if (aktivni) aktivni.classList.remove('active');
+">×</div>
       <div class="info-dialog-title">Općina Grude</div>
       <div class="info-dialog-text">
       Općina Grude smještena je u jugoistočnom dijelu Bosne i Hercegovine, u okviru Županije zapadnohercegovačke. 
@@ -889,7 +908,11 @@ right: 0 !important;
 
       <div id="infoPovijest" class="info-dialog">
 <div class="info-dialog-close"
-onclick="document.getElementById('infoPovijest').style.display='none'">×</div>
+onclick="
+document.getElementById('infoPovijest').style.display='none';
+var aktivni = document.querySelector('.toggle-btn.active');
+if (aktivni) aktivni.classList.remove('active');
+">×</div>
 
 <div class="info-dialog-title">Povijest Općine Grude</div>
 
@@ -925,7 +948,11 @@ Nakon rata nastavljen je snažan gospodarski, infrastrukturni i društveni razvo
 <div id="infoDanas" class="info-dialog">
 
 <div class="info-dialog-close"
-onclick="document.getElementById('infoDanas').style.display='none'">×</div>
+onclick="
+document.getElementById('infoDanas').style.display='none';
+var aktivni = document.querySelector('.toggle-btn.active');
+if (aktivni) aktivni.classList.remove('active');
+">×</div>
 
 <div class="info-dialog-title">Javne ustanove</div>
 
@@ -960,7 +987,11 @@ Središnja policijska postaja nalazi se na Bilom Brigu u Grudama, a na području
 <div id="infoGospodarstvo" class="info-dialog">
 
 <div class="info-dialog-close"
-onclick="document.getElementById('infoGospodarstvo').style.display='none'">×</div>
+onclick="
+document.getElementById('infoGospodarstvo').style.display='none';
+var aktivni = document.querySelector('.toggle-btn.active');
+if (aktivni) aktivni.classList.remove('active');
+">×</div>
 
 <div class="info-dialog-title">Gospodarstvo</div>
 
@@ -985,7 +1016,11 @@ Budući razvoj gospodarstva Općine Grude temelji se na daljnjem jačanju poduze
 <div id="infoKultura" class="info-dialog">
 
 <div class="info-dialog-close"
-onclick="document.getElementById('infoKultura').style.display='none'">×</div>
+onclick="
+document.getElementById('infoKultura').style.display='none';
+var aktivni = document.querySelector('.toggle-btn.active');
+if (aktivni) aktivni.classList.remove('active');
+">×</div>
 
 <div class="info-dialog-title">Kulturne i sportske ustanove</div>
 
@@ -1018,7 +1053,11 @@ Neki od važnijih klubova u Općini Grude su: HKK Grude, HNK Grude, HNK Drinovci
 <div id="infoVjerski" class="info-dialog">
 
 <div class="info-dialog-close"
-onclick="document.getElementById('infoVjerski').style.display='none'">×</div>
+onclick="
+document.getElementById('infoVjerski').style.display='none';
+var aktivni = document.querySelector('.toggle-btn.active');
+if (aktivni) aktivni.classList.remove('active');
+">×</div>
 
 <div class="info-dialog-title">Vjerske ustanove</div>
 
@@ -1049,7 +1088,11 @@ Na području Općine Grude nalaze se 53 groblja: Gorica, Mijaca, Glavica, Bartul
 <div id="infoZnamenitosti" class="info-dialog">
 
 <div class="info-dialog-close"
-onclick="document.getElementById('infoZnamenitosti').style.display='none'">×</div>
+onclick="
+document.getElementById('infoZnamenitosti').style.display='none';
+var aktivni = document.querySelector('.toggle-btn.active');
+if (aktivni) aktivni.classList.remove('active');
+">×</div>
 
 <div class="info-dialog-title">Znamenitosti</div>
 
@@ -1125,7 +1168,7 @@ var obuhvat = [[43.24, 17.20], [43.47, 17.55]];
     position: 'bottomleft'
     }).addTo(map);
     attribution.addAttribution(
-    '<img src="https://leafletjs.com/docs/images/logo.png" ' +
+    '<img src="Oznake/leaflet.png" ' +
     'style="height:22px; cursor:pointer;" ' +
     'alt="Leaflet logo" ' +
     'title="Leaflet" ' +
@@ -1359,7 +1402,7 @@ var gumb = L.DomUtil.create('div', 'toggle-btn layers-toggle-btn', container);
 
 gumb.innerHTML = `
 <img src="Oznake/slojevi.png"
-style="width:24px;height:24px;">
+style="width:28px;height:28px;">
 `;
 
 gumb.style.display = "flex";
@@ -1394,9 +1437,13 @@ return container;
 
 layersIkona.addTo(map);
 
-      var gumbPrikaza = L.control({ position: 'topright' });
-      gumbPrikaza.onAdd = function () {
-      var div = L.DomUtil.create('div', 'toggle-btn');
+var gumbPrikaza = L.control({ position: 'topright' });
+gumbPrikaza.onAdd = function () {
+
+var container = L.DomUtil.create('div');
+container.style.marginTop = '6px';
+
+var div = L.DomUtil.create('div', 'toggle-btn', container);
       div.innerHTML = "3D";
       div.title = "Prikaži u prostoru";
 div.onclick = function (e) {
@@ -1427,9 +1474,47 @@ div.classList.remove('active');
 
 };
 L.DomEvent.disableClickPropagation(div);
-      return div;
+      return container;
       };
       gumbPrikaza.addTo(map);
+
+      var betaGumb = L.control({ position: 'topright' });
+
+betaGumb.onAdd = function () {
+
+var container = L.DomUtil.create('div');
+container.style.marginTop = '6px';
+
+var gumb = L.DomUtil.create('div', 'toggle-btn', container);
+
+gumb.innerHTML = `
+<img src="Oznake/bus.svg"
+style="width:24px;height:24px;">
+`;
+
+gumb.style.display = "flex";
+gumb.style.alignItems = "center";
+gumb.style.justifyContent = "center";
+
+gumb.title = "BETA";
+
+gumb.onclick = function(e) {
+
+L.DomEvent.stopPropagation(e);
+
+zatvoriOtvoreno();
+resetirajAktivneGumbe();
+
+gumb.classList.toggle('active');
+
+};
+
+L.DomEvent.disableClickPropagation(container);
+
+return container;
+};
+
+betaGumb.addTo(map);
 
       var izbornik = L.control({ position: 'topleft' });
 
@@ -1564,7 +1649,7 @@ setTimeout(function() {
       pretrazi.addTo(map);
 
 L.control.scale({
-position: 'bottomright',
+position: 'bottomleft',
 imperial: false,
 metric: true
 }).addTo(map);
