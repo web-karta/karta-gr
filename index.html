@@ -116,7 +116,7 @@ margin-bottom: 1px;
       @media (max-width: 768px) {
 
 .menu-item {
-padding: 10px 10px;
+padding: 11px 8px;
 font-size: 13px;
 }
 
@@ -764,6 +764,39 @@ z-index: 9999 !important;
 .leaflet-control-scale,
 .leaflet-control-attribution {
 z-index: 500 !important;
+}
+
+@media (max-width: 768px) {
+
+.leaflet-top.leaflet-left {
+z-index: 3000 !important;
+}
+
+.leaflet-bottom.leaflet-left {
+z-index: 400 !important;
+}
+
+.location-panel,
+.routing-panel {
+z-index: 9999 !important;
+}
+
+}
+
+@media (max-width: 768px) {
+
+.leaflet-control-attribution {
+left: 10px !important;
+right: auto !important;
+bottom: 10px !important;
+}
+
+.leaflet-control-scale {
+left: auto !important;
+right: 10px !important;
+bottom: 10px !important;
+}
+
 }
     </style>
 
