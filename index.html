@@ -247,6 +247,18 @@ margin-bottom: 10px;
       display: none;
       }
 
+      @media (max-width: 768px) {
+
+.search-input {
+width: 240px;
+}
+
+.search-results {
+width: 240px;
+}
+
+}
+
       .search-result {
       padding: 8px 12px;
       cursor: pointer;
@@ -1081,7 +1093,7 @@ style="width:24px;height:24px;">
 gumb.style.display = "flex";
 gumb.style.alignItems = "center";
 gumb.style.justifyContent = "center";
-gumb.title = "Slojevi";
+gumb.title = "Skupovi podataka";
 
 gumb.onclick = function(e) {
 L.DomEvent.stopPropagation(e);
