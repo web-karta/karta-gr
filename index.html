@@ -5,6 +5,7 @@
       <title>Web-karta Općine Grude</title>
       <link rel="icon" type="image/svg+xml" href="Oznake/Grude.svg">
       <link rel="preload" as="image" href="Oznake/Pretraga.svg">
+      <link rel="preload" as="image" href="Oznake/slojevi.png">
 <link rel="preload" as="image" href="Oznake/Grude.svg">
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
@@ -418,6 +419,87 @@ display: block;
 margin: 4px 0;
 padding-left: 18px;
 }
+
+.leaflet-control-layers {
+position: absolute !important;
+top: 0 !important;
+right: 54px !important;
+display: none;
+width: 300px;
+background: white !important;
+border-radius: 18px !important;
+box-shadow: 0 1px 4px rgba(0,0,0,0.3) !important;
+padding: 14px !important;
+box-sizing: border-box;
+font-family: "PT Sans", sans-serif;
+font-size: 14px;
+line-height: 1.25;
+z-index: 1200;
+max-height: 500px;
+overflow-y: auto;
+border: none !important;
+}
+
+.leaflet-control-layers-expanded {
+display: block !important;
+}
+
+.leaflet-control-layers-toggle {
+display: none !important;
+}
+
+.leaflet-control-layers-list {
+display: block !important;
+}
+
+.leaflet-control-layers label {
+display: block;
+margin-bottom: 2px;
+cursor: pointer;
+
+font-size: 13px !important;
+line-height: 1.2 !important;
+font-family: "PT Sans", sans-serif !important;
+}
+
+.layers-custom-title {
+font-family: "PT Serif", serif;
+font-size: 15px !important;
+font-weight: 700;
+text-align: center;
+margin-bottom: 6px;
+line-height: 1.2 !important;
+}
+
+.leaflet-control-layers label,
+.leaflet-control-layers span {
+color: #000000 !important;
+}
+
+.leaflet-control-layers-separator {
+display: block !important;
+height: 1px;
+margin: 10px 0;
+border: none !important;
+background: rgb(220,220,220);
+}
+
+@media (max-width: 768px) {
+
+.leaflet-control-layers {
+top: 0 !important;
+right: 44px !important;
+width: 280px;
+max-height: 350px;
+font-size: 12px;
+border-radius: 16px !important;
+}
+
+.layers-custom-title {
+font-size: 14px !important;
+}
+
+}
     </style>
 
   </head>
@@ -685,11 +767,17 @@ var obuhvat = [[43.24, 17.20], [43.47, 17.55]];
       zoomControl: false
       }).setView([43.3544, 17.3741], window.innerWidth <= 768 ? 11 : 12);
 
-      L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', { 
-      maxZoom: 19,
-      minZoom: 10 
-      }).addTo(map);
+var cartoPodloga = L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', { 
+maxZoom: 19,
+minZoom: 10 
+}).addTo(map);
 
+var esriPodloga = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+maxZoom: 19,
+minZoom: 10
+});
+
+var aktivnaPodloga = cartoPodloga;
 const mjeriloOznake = L.Marker.prototype.setIcon;
 
 L.Marker.prototype.setIcon = function(icon) {
@@ -750,6 +838,8 @@ btn.classList.remove('active');
       var searchPanel = document.querySelector('.search-panel');
       var locationPanel = document.querySelector('.location-panel');
       var mapInfoPanel = document.querySelector('.map-info-panel');
+var layersPanel = document.querySelector('.leaflet-control-layers');
+var layersBtn = document.querySelector('.layers-toggle-btn');
 
       var viewer = document.getElementById('viewer');
       var frame = document.getElementById('frame');
@@ -773,6 +863,15 @@ btn.classList.remove('active');
 
       if (osim !== 'infoKarte' && mapInfoPanel) {
 mapInfoPanel.style.display = 'none';
+}
+
+if (osim !== 'layers' && layersPanel) {
+layersPanel.classList.remove('leaflet-control-layers-expanded');
+layersPanel.style.display = 'none';
+}
+
+if (osim !== 'layers' && layersBtn) {
+layersBtn.classList.remove('active');
 }
 
       if (osim !== '3d' && viewer) {
@@ -863,6 +962,51 @@ return container;
 };
 
 infoKarte.addTo(map);
+
+var layersIkona = L.control({ position: 'topright' });
+
+layersIkona.onAdd = function () {
+var container = L.DomUtil.create('div');
+container.style.marginTop = '10px';
+
+var gumb = L.DomUtil.create('div', 'toggle-btn layers-toggle-btn', container);
+
+gumb.innerHTML = `
+<img src="Oznake/slojevi.png"
+style="width:24px;height:24px;">
+`;
+
+gumb.style.display = "flex";
+gumb.style.alignItems = "center";
+gumb.style.justifyContent = "center";
+gumb.title = "Slojevi";
+
+gumb.onclick = function(e) {
+L.DomEvent.stopPropagation(e);
+
+var panel = document.querySelector('.leaflet-control-layers');
+var otvoren = panel && panel.style.display === 'block';
+
+zatvoriOtvoreno('layers');
+resetirajAktivneGumbe();
+
+if (panel && !otvoren) {
+panel.style.setProperty('display', 'block', 'important');
+panel.classList.add('leaflet-control-layers-expanded');
+gumb.classList.add('active');
+} else if (panel) {
+panel.classList.remove('leaflet-control-layers-expanded');
+panel.style.setProperty('display', 'none', 'important');
+gumb.classList.remove('active');
+}
+};
+
+L.DomEvent.disableClickPropagation(container);
+
+return container;
+};
+
+layersIkona.addTo(map);
 
       var gumbPrikaza = L.control({ position: 'topright' });
       gumbPrikaza.onAdd = function () {
@@ -1382,6 +1526,19 @@ if (mapInfoPanel) {
 mapInfoPanel.style.display = 'none';
 }
 
+var layersPanel = document.querySelector('.leaflet-control-layers');
+
+if (layersPanel) {
+layersPanel.classList.remove('leaflet-control-layers-expanded');
+layersPanel.style.display = 'none';
+}
+
+var layersBtn = document.querySelector('.layers-toggle-btn');
+
+if (layersBtn) {
+layersBtn.classList.remove('active');
+}
+
 var panel = document.querySelector('.menu-panel');
 
       if (panel) {
@@ -1423,7 +1580,7 @@ dialog.style.display = 'none';
       iconAnchor: [12,12]
       });
 
-      L.geoJSON(crkve, {
+      var slojCrkve = L.geoJSON(crkve, {
       pointToLayer: function(feature, latlng){
       return L.marker(latlng,{icon:Crkve});
       },
@@ -1453,7 +1610,7 @@ dialog.style.display = 'none';
       iconAnchor: [12,12]
       });
 
-      L.geoJSON(groblja, {
+      var slojGroblja = L.geoJSON(groblja, {
       pointToLayer: function(feature, latlng){
       return L.marker(latlng,{icon:Groblja});
       },
@@ -1481,7 +1638,7 @@ dialog.style.display = 'none';
       iconAnchor: [12,12]
       });
 
-      L.geoJSON(skole, {
+      var slojSkole =L.geoJSON(skole, {
       pointToLayer: function(feature, latlng){
       return L.marker(latlng,{icon:Skole});
       },
@@ -1514,7 +1671,7 @@ dialog.style.display = 'none';
       iconAnchor: [12,12]
       });
 
-      L.geoJSON(vrtici, {
+      var slojVrtici =L.geoJSON(vrtici, {
       pointToLayer: function(feature, latlng){
       return L.marker(latlng,{icon:Vrtici});
       },
@@ -1546,7 +1703,7 @@ dialog.style.display = 'none';
       iconAnchor: [12,12]
       });
 
-      L.geoJSON(srustanove, {
+      var slojSRUstanove =L.geoJSON(srustanove, {
       pointToLayer: function(feature, latlng){
       return L.marker(latlng,{icon:SRUstanove});
       },
@@ -1577,7 +1734,7 @@ dialog.style.display = 'none';
       iconAnchor: [12,12]
       });
 
-      L.geoJSON(vetustanove, {
+      var slojVetUstanove = L.geoJSON(vetustanove, {
       pointToLayer: function(feature, latlng){
       return L.marker(latlng,{icon:Vetustanove});
       },
@@ -1609,7 +1766,7 @@ dialog.style.display = 'none';
       iconAnchor: [12,12]
       });
 
-      L.geoJSON(ljekarne, {
+      var slojLjekarne = L.geoJSON(ljekarne, {
       pointToLayer: function(feature, latlng){
       return L.marker(latlng,{icon:Ljekarne});
       },
@@ -1640,7 +1797,7 @@ dialog.style.display = 'none';
       iconAnchor: [12,12]
       });
 
-      L.geoJSON(stomatoloskeustanove, {
+      var slojStomatoloske = L.geoJSON(stomatoloskeustanove, {
       pointToLayer: function(feature, latlng){
       return L.marker(latlng,{icon:Stomatoloskeustanove});
       },
@@ -1671,7 +1828,7 @@ dialog.style.display = 'none';
       iconAnchor: [12,12]
       });
 
-      L.geoJSON(zdravstveneustanove, {
+      var slojZdravstvene = L.geoJSON(zdravstveneustanove, {
       pointToLayer: function(feature, latlng){
       return L.marker(latlng,{icon:Zdravstveneustanove});
       },
@@ -1703,7 +1860,7 @@ dialog.style.display = 'none';
       iconAnchor: [12,12]
       });
 
-      L.geoJSON(vatrogasneustanove, {
+      var slojVatrogasne =  L.geoJSON(vatrogasneustanove, {
       pointToLayer: function(feature, latlng){
       return L.marker(latlng,{icon:Vatrogasneustanove});
       },
@@ -1734,7 +1891,7 @@ dialog.style.display = 'none';
       iconAnchor: [12,12]
       });
 
-      L.geoJSON(posta, {
+      var slojPosta = L.geoJSON(posta, {
       pointToLayer: function(feature, latlng){
       return L.marker(latlng,{icon:Posta});
       },
@@ -1766,7 +1923,7 @@ dialog.style.display = 'none';
       iconAnchor: [12,12]
       });
 
-      L.geoJSON(policijacarina, {
+      var slojPolicijaCarina = L.geoJSON(policijacarina, {
       pointToLayer: function(feature, latlng){
       return L.marker(latlng,{icon:Policijacarina});
       },
@@ -1798,7 +1955,7 @@ dialog.style.display = 'none';
       iconAnchor: [15,15]
       });
 
-      L.geoJSON(granicniprijelazi, {
+      var slojGranicniPrijelazi = L.geoJSON(granicniprijelazi, {
       pointToLayer: function(feature, latlng){
       return L.marker(latlng,{icon:Granicniprijelazi});
       },
@@ -1832,7 +1989,7 @@ dialog.style.display = 'none';
       iconAnchor: [12,12]
       });
 
-      L.geoJSON(javnauprava, {
+      var slojJavnaUprava = L.geoJSON(javnauprava, {
       pointToLayer: function(feature, latlng){
       return L.marker(latlng,{icon:Javnauprava});
       },
@@ -1864,7 +2021,7 @@ dialog.style.display = 'none';
       iconAnchor: [12,12]
       });
 
-      L.geoJSON(kulturneustanove, {
+      var slojKulturneUstanove = L.geoJSON(kulturneustanove, {
       pointToLayer: function(feature, latlng){
       return L.marker(latlng,{icon:Kulturneustanove});
       },
@@ -1895,7 +2052,7 @@ dialog.style.display = 'none';
       iconAnchor: [12,12]
       });
 
-      L.geoJSON(prirodneznamenitosti, {
+      var slojPrirodneZnamenitosti = L.geoJSON(prirodneznamenitosti, {
       pointToLayer: function(feature, latlng){
       return L.marker(latlng,{icon:Prirodneznamenitosti});
       },
@@ -1920,7 +2077,7 @@ dialog.style.display = 'none';
       iconAnchor: [12,12]
       });
 
-      L.geoJSON(kultpovznamenitosti, {
+      var slojKulturnoPovijesneZnamenitosti = L.geoJSON(kultpovznamenitosti, {
       pointToLayer: function(feature, latlng){
       return L.marker(latlng,{icon:Kultpovznamenitosti});
       },
@@ -1945,7 +2102,7 @@ dialog.style.display = 'none';
       iconAnchor: [12,12]
       });
 
-      L.geoJSON(restorani, {
+      var slojRestorani = L.geoJSON(restorani, {
       pointToLayer: function(feature, latlng){
       return L.marker(latlng,{icon:Restorani});
       },
@@ -1975,7 +2132,7 @@ dialog.style.display = 'none';
       iconAnchor: [12,12]
       });
 
-      L.geoJSON(kafici, {
+      var slojKafici = L.geoJSON(kafici, {
       pointToLayer: function(feature, latlng){
       return L.marker(latlng,{icon:Kafici});
       },
@@ -2005,7 +2162,7 @@ dialog.style.display = 'none';
       iconAnchor: [12,12]
       });
 
-      L.geoJSON(smjestaji, {
+      var slojSmjestaji = L.geoJSON(smjestaji, {
       pointToLayer: function(feature, latlng){
       return L.marker(latlng,{icon:Smjestaji});
       },
@@ -2035,7 +2192,7 @@ dialog.style.display = 'none';
       iconAnchor: [12,12]
       });
 
-      L.geoJSON(benzinskepostaje, {
+      var slojBenzinskePostaje = L.geoJSON(benzinskepostaje, {
       pointToLayer: function(feature, latlng){
       return L.marker(latlng,{icon:Benzinskepostaje});
       },
@@ -2065,7 +2222,7 @@ dialog.style.display = 'none';
       iconAnchor: [12,12]
       });
 
-      L.geoJSON(banke, {
+      var slojBanke = L.geoJSON(banke, {
       pointToLayer: function(feature, latlng){
       return L.marker(latlng,{icon:Banke});
       },
@@ -2095,7 +2252,7 @@ dialog.style.display = 'none';
       iconAnchor: [12,12]
       });
 
-      L.geoJSON(trgovine, {
+      var slojTrgovine = L.geoJSON(trgovine, {
       pointToLayer: function(feature, latlng){
       return L.marker(latlng,{icon:Trgovine});
       },
@@ -2125,7 +2282,7 @@ dialog.style.display = 'none';
       iconAnchor: [12,12]
       });
 
-      L.geoJSON(poduzeca, {
+      var slojPoduzeca = L.geoJSON(poduzeca, {
       pointToLayer: function(feature, latlng){
       return L.marker(latlng,{icon:Poduzeca});
       },
@@ -2198,7 +2355,177 @@ dialog.style.display = 'none';
       });
       }
       }).addTo(adresniBufferSloj);
-      adresniBufferSloj.bringToBack();
+      //adresniBufferSloj.bringToBack();
+
+var adresniIkoneUkljucene = false;
+
+var slojAdresniRegistar = L.layerGroup();
+
+var slojAdresneIkone = L.layerGroup();
+
+function iscrtajVidljiveAdresneIkone() {
+slojAdresneIkone.clearLayers();
+
+if (!adresniIkoneUkljucene) return;
+if (map.getZoom() < 17) return;
+
+var bounds = map.getBounds();
+
+adresniregistar.features.forEach(function(feature) {
+var coords = feature.geometry.coordinates;
+var latlng = L.latLng(coords[1], coords[0]);
+
+if (!bounds.contains(latlng)) return;
+
+var marker = L.marker(latlng, { icon: Adresniregistar });
+
+var okvirAdrese = `
+<div class="popup-title">${feature.properties["Adresa"] || ""}</div>
+`;
+
+marker.bindPopup(okvirAdrese, okvir());
+marker.addTo(slojAdresneIkone);
+});
+}
+
+function osvjeziPrikazAdresnihIkona() {
+if (!adresniIkoneUkljucene || map.getZoom() < 17) {
+slojAdresneIkone.clearLayers();
+
+if (map.hasLayer(slojAdresneIkone)) {
+map.removeLayer(slojAdresneIkone);
+}
+
+return;
+}
+
+if (!map.hasLayer(slojAdresneIkone)) {
+map.addLayer(slojAdresneIkone);
+}
+
+iscrtajVidljiveAdresneIkone();
+}
+
+
+      var podloge = {
+"CARTO Voyager": cartoPodloga,
+"ESRI World Imagery": esriPodloga
+};
+
+var tematskiSlojevi = {
+  "Javna uprava": slojJavnaUprava,
+"Policija i carina": slojPolicijaCarina,
+"Vatrogasne ustanove": slojVatrogasne,
+"Zdravstvene ustanove": slojZdravstvene,
+"Ljekarne": slojLjekarne,
+"Stomatološke ustanove": slojStomatoloske,
+"Veterinarske ustanove": slojVetUstanove,
+"Pošte": slojPosta,
+"Kulturne ustanove": slojKulturneUstanove,
+"Prirodne znamenitosti": slojPrirodneZnamenitosti,
+"Kulturno-povijesne znamenitosti": slojKulturnoPovijesneZnamenitosti,
+"Škole": slojSkole,
+"Vrtići": slojVrtici,
+"Crkve": slojCrkve,
+"Groblja": slojGroblja,
+"Sportsko-rekreacijske ustanove": slojSRUstanove,
+"Poduzeća": slojPoduzeca,
+"Trgovine": slojTrgovine,
+"Banke": slojBanke,
+"Smještaji": slojSmjestaji,
+"Benzinske postaje": slojBenzinskePostaje,
+"Restorani": slojRestorani,
+"Kafići": slojKafici,
+"Granični prijelazi": slojGranicniPrijelazi,
+"Adresni registar": slojAdresniRegistar
+};
+
+var praviLayersPanel = L.control.layers(podloge, tematskiSlojevi, {
+collapsed: true,
+position: 'topright'
+}).addTo(map);
+
+map.on('overlayadd', function(e) {
+if (e.name === 'Adresni registar') {
+adresniIkoneUkljucene = true;
+
+if (map.getZoom() < 17) {
+alert("Adresni registar prikazuje se tek od zooma 17 radi bržeg rada karte. Povećajte prikaz i adrese će se automatski prikazati.");
+}
+
+osvjeziPrikazAdresnihIkona();
+}
+});
+
+map.on('overlayremove', function(e) {
+if (e.name === 'Adresni registar') {
+adresniIkoneUkljucene = false;
+osvjeziPrikazAdresnihIkona();
+}
+});
+
+map.on('overlayremove', function(e) {
+if (e.name === 'Adresni registar') {
+
+if (adresniPrivremenoSkriven) {
+return;
+}
+
+adresniIkoneUkljucene = false;
+
+if (map.hasLayer(slojAdresniRegistar)) {
+map.removeLayer(slojAdresniRegistar);
+}
+}
+});
+
+map.on('zoomend', function() {
+osvjeziPrikazAdresnihIkona();
+});
+
+map.on('moveend', function() {
+osvjeziPrikazAdresnihIkona();
+});
+
+setTimeout(function() {
+var panel = document.querySelector('.leaflet-control-layers');
+
+if (panel) {
+panel.classList.remove('leaflet-control-layers-expanded');
+panel.style.display = 'none';
+
+var overlays = panel.querySelector('.leaflet-control-layers-overlays');
+var bases = panel.querySelector('.leaflet-control-layers-base');
+
+if (overlays && bases) {
+
+if (!overlays.querySelector('.layers-custom-title')) {
+overlays.insertAdjacentHTML(
+'afterbegin',
+'<div class="layers-custom-title">Tematski slojevi</div>'
+);
+}
+
+if (!bases.querySelector('.layers-custom-title')) {
+bases.insertAdjacentHTML(
+'afterbegin',
+'<div class="layers-custom-title">Podloge</div>'
+);
+}
+
+var separator = panel.querySelector('.leaflet-control-layers-separator');
+
+if (separator) {
+bases.parentNode.insertBefore(separator, bases);
+}
+
+bases.parentNode.insertBefore(overlays, separator || bases);
+}
+
+L.DomEvent.disableClickPropagation(panel);
+L.DomEvent.disableScrollPropagation(panel);
+}
+}, 0);
 
       map.on('click', function() {
       ukloniAktivnuAdresu();
