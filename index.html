@@ -330,7 +330,7 @@ position: relative;
       }
 
 .leaflet-control-locate {
-margin-top: 10px !important;
+margin-top: 6px !important;
 }
 
 .leaflet-control-locate,
@@ -544,9 +544,9 @@ font-size: 14px !important;
 
         .leaflet-control-scale {
         left: auto !important;
-        right: 15px !important;
+        right: 10px !important;
         font-family: 'PT Sans', sans-serif !important;
-        bottom: 10px !important;
+        bottom: 8px !important;
         }
 
 
@@ -694,6 +694,7 @@ margin-top: 6px;
 }
 
 .routing-actions button,
+.routing-edit,
 .routing-clear {
 border: none;
 border-radius: 9px;
@@ -704,15 +705,49 @@ cursor: pointer;
 background: rgb(235,235,235);
 }
 
-.routing-clear {
-width: 100%;
+.routing-bottom-actions {
+display: flex;
+gap: 6px;
 margin-top: 10px;
+}
+
+.routing-edit,
+.routing-clear {
+flex: 1;
 }
 
 .routing-status {
 font-size: 13px;
 margin-top: 8px;
 color: #444;
+}
+
+.routing-panel.routing-compact {
+padding: 10px 14px;
+width: 280px;
+max-width: 280px;
+}
+
+.routing-panel.routing-compact .routing-label,
+.routing-panel.routing-compact .routing-input,
+.routing-panel.routing-compact .routing-suggestions,
+.routing-panel.routing-compact .routing-actions {
+display: none !important;
+}
+
+.routing-panel.routing-compact .routing-status {
+margin-top: 0;
+font-weight: 700;
+text-align: center;
+}
+
+.routing-panel.routing-compact .routing-bottom-actions {
+margin-top: 8px;
+}
+
+.routing-panel.routing-compact .routing-edit,
+.routing-panel.routing-compact .routing-clear {
+min-height: 34px;
 }
 
 .leaflet-routing-container {
@@ -750,6 +785,16 @@ min-height: 34px;
 #routingClose {
 padding: 8px;
 margin: -8px;
+}
+
+}
+
+@media (max-width: 768px) {
+
+.routing-panel.routing-compact {
+width: calc(100vw - 80px) !important;
+max-width: 280px !important;
+bottom: 18px !important;
 }
 
 }
@@ -1308,7 +1353,7 @@ var layersIkona = L.control({ position: 'topright' });
 
 layersIkona.onAdd = function () {
 var container = L.DomUtil.create('div');
-container.style.marginTop = '10px';
+container.style.marginTop = '6px';
 
 var gumb = L.DomUtil.create('div', 'toggle-btn layers-toggle-btn', container);
 
@@ -1460,7 +1505,7 @@ panel.style.display = "none";
 
       pretrazi.onAdd = function () {
       var container = L.DomUtil.create('div');
-      container.style.marginTop = '10px';
+      container.style.marginTop = '6px';
 
       var gumb = L.DomUtil.create('div', 'toggle-btn', container);
 gumb.innerHTML = `
@@ -1573,13 +1618,14 @@ var routingTo = null;
 var routingFromMarker = null;
 var routingToMarker = null;
 var routingFromJeMojaLokacija = false;
+var routingPratiKorisnika = false;
 var zadnjeRerutiranje = 0;
 
 var routingGumb = L.control({ position: 'topleft' });
 
 routingGumb.onAdd = function () {
 var container = L.DomUtil.create('div');
-container.style.marginTop = '10px';
+container.style.marginTop = '6px';
 
 var gumb = L.DomUtil.create('div', 'toggle-btn routing-toggle-btn', container);
 gumb.innerHTML = `<span style="display:block;transform:translateY(-2px) rotate(-45deg);">➤</span>`;
@@ -1591,7 +1637,7 @@ panel.innerHTML = `
 <div style="
 position:relative;
 height:0;
-margin-bottom:0;
+margin-bottom:15px;
 ">
 
 <span id="routingClose" style="
@@ -1621,7 +1667,11 @@ line-height:1;
 <button id="routingToMap">Odaberi na karti</button>
 </div>
 
+<div class="routing-bottom-actions">
+<button id="routingEdit" class="routing-edit">Promijeni rutu</button>
 <button id="routingClear" class="routing-clear">Ukloni rutu</button>
+</div>
+
 <div id="routingStatus" class="routing-status"></div>
 `;
 
@@ -1712,6 +1762,7 @@ routingFrom = null;
 routingTo = null;
 routingOdabirAktivan = null;
 routingFromJeMojaLokacija = false;
+routingPratiKorisnika = false;
 zadnjeRerutiranje = 0;
 
 var fromInput = document.getElementById("routingFromInput");
@@ -1728,6 +1779,11 @@ fromSug.style.display = "none";
 if (toSug) {
 toSug.innerHTML = "";
 toSug.style.display = "none";
+}
+
+var panel = document.querySelector(".routing-panel");
+if (panel) {
+panel.classList.remove("routing-compact");
 }
 
 postaviRoutingStatus("");
@@ -1835,6 +1891,11 @@ tekstVrijeme = sati + " h " + ostatakMinuta + " min.";
 
 postaviRoutingStatus("Duljina: " + tekstUdaljenost + " | Vrijeme: " + tekstVrijeme);
 
+var panel = document.querySelector(".routing-panel");
+if (panel) {
+panel.classList.add("routing-compact");
+}
+
 });
 
 routingControl.on('routingerror', function() {
@@ -1927,6 +1988,17 @@ var toMap = document.getElementById("routingToMap");
 var fromLocation = document.getElementById("routingFromLocation");
 var clear = document.getElementById("routingClear");
 
+var editBtn = document.getElementById("routingEdit");
+
+if (editBtn) {
+editBtn.onclick = function() {
+var panel = document.querySelector(".routing-panel");
+if (panel) {
+panel.classList.remove("routing-compact");
+}
+};
+}
+
 if (fromMap) {
 fromMap.onclick = function(e) {
 e.stopPropagation();
@@ -1947,19 +2019,29 @@ e.stopPropagation();
 
 if (window.lastUserLocation) {
 routingFromJeMojaLokacija = true;
+routingPratiKorisnika = true;
 
 postaviRoutingTocku(
 "from",
 window.lastUserLocation,
 "Moja lokacija"
-);return;
-}
+);
 
+map.panTo(window.lastUserLocation, { animate: true });
+
+return;
+}
 if (navigator.geolocation) {
 
 navigator.geolocation.getCurrentPosition(function(pos) {
 var latlng = L.latLng(pos.coords.latitude, pos.coords.longitude);
+
+routingFromJeMojaLokacija = true;
+routingPratiKorisnika = true;
+
 postaviRoutingTocku("from", latlng, "Moja lokacija");
+
+map.panTo(latlng, { animate: true });
 }, function() {
 postaviRoutingStatus("Lokacija nije dostupna.");
 }, {
@@ -1973,32 +2055,40 @@ maximumAge: 5000
 
 if (clear) {
 clear.onclick = function(e) {
+e.preventDefault();
 e.stopPropagation();
 
-if (routingControl) {
-map.removeControl(routingControl);
-routingControl = null;
+resetirajRouting();
+
+var panel = document.querySelector(".routing-panel");
+
+if (panel) {
+panel.classList.remove("routing-compact");
+panel.style.display = "block";
 }
 
-if (routingFromMarker) {
-map.removeLayer(routingFromMarker);
-routingFromMarker = null;
+var routingBtn = document.querySelector(".routing-toggle-btn");
+
+if (routingBtn) {
+routingBtn.classList.add("active");
 }
 
-if (routingToMarker) {
-map.removeLayer(routingToMarker);
-routingToMarker = null;
+setTimeout(function() {
+var input = document.getElementById("routingFromInput");
+if (input) {
+input.focus();
 }
+}, 50);
 
-routingFrom = null;
-routingTo = null;
-routingOdabirAktivan = null;
-
-document.getElementById("routingFromInput").value = "";
-document.getElementById("routingToInput").value = "";
 };
 }
 }
+
+map.on('dragstart', function() {
+if (routingFromJeMojaLokacija) {
+routingPratiKorisnika = false;
+}
+});
 
 map.on('click', function(e) {
 
@@ -2105,7 +2195,11 @@ map.on('locationfound', function(e) {
 
   window.lastUserLocation = e.latlng;
 
-  if (routingFromJeMojaLokacija && routingTo) {
+if (routingFromJeMojaLokacija && routingTo) {
+
+if (routingPratiKorisnika) {
+map.panTo(e.latlng, { animate: true });
+}
 
 var sada = Date.now();
 
