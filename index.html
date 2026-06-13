@@ -1682,7 +1682,7 @@ setTimeout(function() {
       pretrazi.addTo(map);
 
 L.control.scale({
-position: 'bottomleft',
+position: window.innerWidth <= 768 ? 'bottomright' : 'bottomleft',
 imperial: false,
 metric: true
 }).addTo(map);
