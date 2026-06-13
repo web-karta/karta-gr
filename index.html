@@ -767,6 +767,8 @@ width: 280px;
 max-width: 280px;
 }
 
+
+
 .routing-panel.routing-compact .routing-label,
 .routing-panel.routing-compact .routing-input,
 .routing-panel.routing-compact .routing-suggestions,
@@ -1310,9 +1312,10 @@ var layersBtn = document.querySelector('.layers-toggle-btn');
       }
       }
 
-      if (osim !== 'lociranje' && locationPanel) {
-      locationPanel.style.display = 'none';
-      }
+if (osim !== 'lociranje' && locationPanel) {
+locationPanel.style.display = 'none';
+prikaziPanelLokacije = false;
+}
 
       if (osim !== 'infoKarte' && mapInfoPanel) {
 mapInfoPanel.style.display = 'none';
@@ -1687,6 +1690,8 @@ imperial: false,
 metric: true
 }).addTo(map);
 
+var prikaziPanelLokacije = false;
+
 var locateControl = L.control.locate({
 position: 'topleft',
 setView: false,
@@ -1728,6 +1733,14 @@ timeout: 10000,
 watch: true
 }
 }).addTo(map);
+
+var locateButton = document.querySelector('.leaflet-control-locate a');
+
+if (locateButton) {
+locateButton.addEventListener('click', function() {
+prikaziPanelLokacije = true;
+});
+}
 
 var routingControl = null;
 var routingOdabirAktivan = null;
@@ -2279,17 +2292,18 @@ document.querySelector('.leaflet-control-locate.requesting');
 
 if (active) {
 
+prikaziPanelLokacije = true;
+
 locateButton.style.setProperty('background', '#FFF2CC', 'important');
 
 if (window.lastUserLocation) {
 prikaziNajblizeObjekte(window.lastUserLocation);
-
-if (locationPanel) {
 locationPanel.style.display = 'block';
-}
 }
 
 } else {
+
+prikaziPanelLokacije = false;
 
 locateButton.style.setProperty('background', 'white', 'important');
 
@@ -2369,12 +2383,16 @@ locationPanel.style.display = 'none';
 return;
 }
 
+if (prikaziPanelLokacije) {
+
 prikaziNajblizeObjekte(userLatLng);
 
 var locationPanel = document.querySelector('.location-panel');
 
 if (locationPanel) {
 locationPanel.style.display = 'block';
+}
+
 }
 
 });
@@ -2649,10 +2667,11 @@ searchResults.style.display = 'none';
 }
       }
 
- var locationPanel = document.querySelector('.location-panel');
+var locationPanel = document.querySelector('.location-panel');
 
 if (locationPanel) {
 locationPanel.style.display = 'none';
+prikaziPanelLokacije = false;
 }
 
 ['infoOpcina','infoPovijest','infoDanas', 'infoGospodarstvo', 'infoKultura', 'infoVjerski',  'infoZnamenitosti'].forEach(function(id){
