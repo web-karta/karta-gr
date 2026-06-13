@@ -187,14 +187,48 @@ overflow-y: auto;
       text-align: justify;
       }
 
-      .info-dialog-close {
-      position: absolute;
-      top: 8px;
-      right: 12px;
-      cursor: pointer;
-      font-size: 18px;
-      font-weight: 700;
-      }
+.info-dialog-close,
+.panel-close,
+.routing-close {
+position: absolute;
+top: -10px;
+right: 1px;
+
+width: 24px;
+height: 24px;
+
+line-height: 24px;
+text-align: center;
+
+font-size: 22px;
+font-weight: normal;
+font-family: Tahoma, Verdana, sans-serif;
+
+color: #757575;
+cursor: pointer;
+text-decoration: none;
+}
+
+.info-dialog-close:hover,
+.panel-close:hover,
+.routing-close:hover {
+color: #000;
+}
+
+.routing-close,
+.routing-close:link,
+.routing-close:visited,
+.routing-close:hover,
+.routing-close:active,
+.routing-close:focus {
+color: #757575 !important;
+text-decoration: none !important;
+outline: none !important;
+}
+
+.routing-close:hover {
+color: #000 !important;
+}
 
 .map-info-panel {
 position: absolute;
@@ -762,12 +796,15 @@ color: #444;
 }
 
 .routing-panel.routing-compact {
-padding: 10px 14px;
+padding: 14px 14px 10px 14px;
 width: 280px;
 max-width: 280px;
 }
 
-
+.routing-panel.routing-compact .routing-close {
+top: -15px;
+right: 1px;
+}
 
 .routing-panel.routing-compact .routing-label,
 .routing-panel.routing-compact .routing-input,
@@ -1734,13 +1771,13 @@ watch: true
 }
 }).addTo(map);
 
-var locateButton = document.querySelector('.leaflet-control-locate a');
+/*var locateButton = document.querySelector('.leaflet-control-locate a');
 
 if (locateButton) {
 locateButton.addEventListener('click', function() {
 prikaziPanelLokacije = true;
 });
-}
+}*/
 
 var routingControl = null;
 var routingOdabirAktivan = null;
@@ -1768,18 +1805,11 @@ panel.innerHTML = `
 <div style="
 position:relative;
 height:0;
-margin-bottom:15px;
+margin-bottom:6px;
 ">
-
-<span id="routingClose" style="
-position:absolute;
-right:2px;
-top:0px;
-cursor:pointer;
-font-size:18px;
-font-weight:700;
-line-height:1;
-">×</span>
+<a href="#"
+id="routingClose"
+class="routing-close">×</a>
 
 </div>
 
@@ -2330,7 +2360,10 @@ map.on('locationfound', function(e) {
 if (routingFromJeMojaLokacija && routingTo) {
 
 if (routingPratiKorisnika) {
-map.panTo(e.latlng, { animate: true });
+map.panTo(e.latlng, {
+animate: true,
+duration: 0.5
+});
 }
 
 var sada = Date.now();
@@ -2344,7 +2377,14 @@ if (routingFromMarker) {
 routingFromMarker.setLatLng(e.latlng);
 }
 
+if (routingControl) {
+routingControl.setWaypoints([
+routingFrom,
+routingTo
+]);
+} else {
 pokreniRoutingAkoJeSpreman();
+}
 }
 
 }
